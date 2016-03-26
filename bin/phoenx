@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+
+require 'phoenx'
+
+# Build cli
+
+cli = Phoenx::Cli::Command.new "root", "" do |c|
+
+	c.print
+
+end
+
+cli.base_command = "phoenx"
+
+# Add setup command
+
+init_command = Phoenx::Cli::Command.new "install", "Initializes the workspace" do
+
+	workspaces = Dir["*." + Phoenx::WORKSPACE_EXTENSION]
+	
+	if workspaces.count < 1
+
+		puts "Error: No workspace spec found!".red
+		exit
+
+	end
+
+	workspace = eval File.read(workspaces.first)
+	
+	if !workspace
+
+		puts "Error: No workspace spec found!".red
+		exit
+
+	end
+
+	puts "\r\nGenerating projects and workspace".green
+		
+	generator = Phoenx::GenerateWorkspace.new workspace
+	generator.generate
+	
+	exit
+
+end
+
+init_command.base_command = "phoenx install"
+init_command.usage = "Initializes the workspace by cloning all repositories and generating the xcodeproj files."
+
+init_help_option = Phoenx::Cli::Option.new("--help", "-h","Shows this help",false) do
+	init_command.print
+	exit
+end
+
+init_command.add_option init_help_option
+
+# Add update command
+
+update_command = Phoenx::Cli::Command.new "update", "Updates all repos and regenerates project files" do
+
+	workspaces = Dir["*." + Phoenx::WORKSPACE_EXTENSION]
+	
+	if workspaces.count < 1
+
+		puts "Error: No workspace spec found!".red
+		exit
+
+	end
+	
+	workspace = eval File.read(workspaces.first)
+	
+	if !workspace
+	
+		puts "Error: No workspace spec found!".red
+		exit
+	
+	end
+	
+	puts "\r\nGenerating projects and workspace".green
+		
+	generator = Phoenx::WorkspaceGenerator.new workspace
+	generator.generate
+	
+	exit
+
+end
+
+update_command.base_command = "phoenx update"
+
+update_help_option = Phoenx::Cli::Option.new("--help", "-h","Shows this help",false) do
+	update_command.print
+	exit
+end
+
+update_command.add_option update_help_option
+
+# Add version and help options
+
+version_option = Phoenx::Cli::Option.new("--version","-v","Shows version information",false) do
+	puts "phoenx version " + Phoenx::VERSION.bold
+	
+	exit
+end
+
+help_option = Phoenx::Cli::Option.new("--help","-h","Shows this help",false) do
+	cli.print
+	exit
+end
+
+cli.add_option version_option
+cli.add_option help_option
+
+cli.add_command init_command
+cli.add_command update_command
+
+cli.parse ARGV

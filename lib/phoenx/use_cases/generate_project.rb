@@ -1,0 +1,123 @@
+module Phoenx
+
+	class GenerateProject
+	
+		:project_spec
+		:workspace_spec
+		:project
+	
+		def initialize(project_spec, workspace_spec)
+		
+			@project_spec = project_spec
+			@workspace_spec = workspace_spec
+		
+		end
+		
+		def build
+		
+			@project_spec.pre_install_scripts.each do |pre_script|
+			
+				puts `./#{pre_script}`
+			
+			end
+		
+			# Build Project
+
+			@project = Xcodeproj::Project::new(@project_spec.project_file_name)
+			
+			self.generate_configurations
+			self.add_config_files
+			self.build_targets
+			
+			@project.main_group.sort_recursively
+			
+			@project.save(@project_spec.project_file_name)	
+			
+			@project_spec.post_install_scripts.each do |post_script|
+			
+				puts `./#{post_script}`
+			
+			end	
+		
+		end
+		
+		def build_targets
+		
+			@project_spec.targets.each do |target|
+
+				if target.target_type == :application
+				
+					builder = ApplicationTargetBuilder.new @project, target, @workspace_spec, @project_spec
+					builder.build
+				
+				elsif target.target_type == :framework
+
+					builder = FrameworkTargetBuilder.new @project, target, @workspace_spec, @project_spec
+					builder.build
+				
+				end
+			
+			end
+		
+		end
+		
+		def generate_configurations
+			
+			@project_spec.configurations.each do |config|
+			
+				@project.add_build_configuration(config.name, config.parent)
+			
+			end
+		
+		end
+		
+		def add_config_files
+		
+			# Add configuration group
+			
+			@project_spec.config_files.values.each do |path|
+			
+				groups = File.dirname(path).split("/")
+				concate = ""
+				
+				groups.each do |g|
+				
+					concate +=  g + "/"
+					group_ref = @project.main_group.find_subpath(concate, true)
+					group_ref.set_path(g)
+				
+				end
+			
+			end
+		
+			@project_spec.config_files.keys.each do |config|
+			
+				file_name = @project_spec.config_files[config]
+
+				unless file_name == nil
+				
+					g = @project.main_group.find_subpath(File.dirname(file_name), false)
+
+					file = g.find_file_by_path(File.basename(file_name))
+					
+					unless file != nil
+					
+						file = g.new_reference(File.basename(file_name))
+					
+					end
+					
+					configuration = @project.build_configuration_list[config]
+					
+					unless configuration == nil
+						configuration.base_configuration_reference = file
+					end
+				
+				end
+			
+			end
+		
+		end
+	
+	end
+
+end
