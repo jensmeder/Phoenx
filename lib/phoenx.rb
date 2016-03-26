@@ -17,3 +17,5 @@ require 'phoenx/entities/repository'
 require 'phoenx/use_cases/generate_workspace'
 require 'phoenx/use_cases/generate_project'
 require 'phoenx/use_cases/generate_target'
+
+require 'phoenx/utilities/xcodeproj_utils'

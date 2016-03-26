@@ -28,25 +28,10 @@ module Phoenx
 				resources.concat Dir[source]
 			
 			end
+			
+			Phoenx.add_groups_for_files(@project, resources)
 
 			resources.each do |source|
-			
-				groups = File.dirname(source).split("/")
-				concate = ""
-				
-				groups.each do |g|
-				
-					if self.is_bundle?(g)
-						
-						break
-							
-					end
-				
-					concate +=  g + "/"
-					group_ref = @project.main_group.find_subpath(concate, true)
-					group_ref.set_path(g)
-				
-				end
 				
 				group = @project.main_group.find_subpath(File.dirname(source), false)
 				file = group.find_file_by_path(File.basename(source))
@@ -125,12 +110,6 @@ module Phoenx
 	
 		end
 		
-		def is_bundle?(file)
-		
-			return file.include?('xcassets') || file.include?('bundle')
-		
-		end
-		
 		def add_resources
 	
 			# Add Resource files
@@ -140,26 +119,11 @@ module Phoenx
 				resources.concat Dir[source]
 			
 			end
+			
+			Phoenx.add_groups_for_files(@project, resources)
 
 			resources.each do |source|
 			
-				groups = File.dirname(source).split("/")
-				concate = ""
-				
-				groups.each do |g|
-				
-					if self.is_bundle?(g)
-						
-						break
-							
-					end
-				
-					concate +=  g + "/"
-					group_ref = @project.main_group.find_subpath(concate, true)
-					group_ref.set_path(g)
-				
-				end
-				
 				file = nil
 				
 				if self.is_bundle?(source)
@@ -225,19 +189,10 @@ module Phoenx
 				sources.concat Dir[source]
 			
 			end
+			
+			Phoenx.add_groups_for_files(@project, sources)
 
 			sources.each do |source|
-			
-				groups = File.dirname(source).split("/")
-				concate = ""
-				
-				groups.each do |g|
-				
-					concate +=  g + "/"
-					group_ref = @project.main_group.find_subpath(concate, true)
-					group_ref.set_path(g)
-				
-				end
 
 				group = @project.main_group.find_subpath(File.dirname(source), true)
 				group.set_path(File.dirname(source).split("/").last)
@@ -264,20 +219,11 @@ module Phoenx
 			
 			end
 
+			Phoenx.add_groups_for_files(@project, headers)
+
 			headers.each do |header|
 			
 				group = @project.main_group.find_subpath(File.dirname(header), true)
-				groups = File.dirname(header).split("/")
-				concate = ""
-				
-				groups.each do |g|
-				
-					concate +=  g + "/"
-					group_ref = @project.main_group.find_subpath(concate, true)
-					group_ref.set_path(g)
-				
-				end
-
 				file = group.find_file_by_path(File.basename(header))
 				
 				unless file != nil
@@ -315,20 +261,7 @@ module Phoenx
 		
 			# Add configuration group
 			
-			@target_spec.config_files.values.each do |path|
-			
-				groups = File.dirname(path).split("/")
-				concate = ""
-				
-				groups.each do |g|
-				
-					concate +=  g + "/"
-					group_ref = @project.main_group.find_subpath(concate, true)
-					group_ref.set_path(g)
-				
-				end
-			
-			end
+			Phoenx.add_groups_for_files(@project, @target_spec.config_files.values)
 		
 			@target_spec.config_files.keys.each do |config|
 			

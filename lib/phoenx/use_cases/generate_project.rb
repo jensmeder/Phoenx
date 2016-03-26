@@ -72,23 +72,8 @@ module Phoenx
 		end
 		
 		def add_config_files
-		
-			# Add configuration group
 			
-			@project_spec.config_files.values.each do |path|
-			
-				groups = File.dirname(path).split("/")
-				concate = ""
-				
-				groups.each do |g|
-				
-					concate +=  g + "/"
-					group_ref = @project.main_group.find_subpath(concate, true)
-					group_ref.set_path(g)
-				
-				end
-			
-			end
+			Phoenx::add_groups_for_files(@project,@project_spec.config_files.values)
 		
 			@project_spec.config_files.keys.each do |config|
 			
