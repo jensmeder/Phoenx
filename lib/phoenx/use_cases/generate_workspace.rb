@@ -30,7 +30,14 @@ module Phoenx
 		
 			@workspace.projects.keys.each do |key,value| 
 			
-				Dir.chdir(value)
+				path = value
+				if path == nil
+				
+					path = Dir.pwd
+				
+				end
+				
+				Dir.chdir(path)
 				specs = Dir['*.' + PROJECT_EXTENSION]
 			
 				file = File.read(specs.first)
@@ -39,7 +46,7 @@ module Phoenx
 				generator = Phoenx::GenerateProject.new spec, @workspace
 				generator.build
 			
-				Dir.chdir(pwd)
+				Dir.chdir(path)
 			
 			end
 		

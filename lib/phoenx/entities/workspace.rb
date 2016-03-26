@@ -8,20 +8,13 @@ module Phoenx
 		
 		def initialize
 		
-			@repositories = []
 			@projects = {}
 
 			yield(self)
 		
 		end
 		
-		def repository(folder, url, branch)
-		
-			@repositories << Repository.new(folder, url, branch)
-		
-		end
-		
-		def project(name, path)
+		def project(name, path = nil)
 		
 			@projects[name] = path
 		
