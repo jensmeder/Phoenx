@@ -33,6 +33,20 @@ module Phoenx
 	
 	end
 	
+	def Phoenx.get_or_add_files(project, files)
+	
+		resources = Phoenx.merge_files_array(files)
+			
+		Phoenx.add_groups_for_files(project, resources)
+
+		resources.each do |source|
+				
+			Phoenx.get_or_add_file(project,source)
+				
+		end
+	
+	end
+	
 	def Phoenx.get_or_add_file(project,file)
 	
 		filename = File.basename(file)
@@ -48,6 +62,32 @@ module Phoenx
 		end	
 		
 		return file_ref
+	
+	end
+	
+	def Phoenx.set_target_build_settings_defaults(target)
+		
+		target.build_configuration_list.build_configurations.each do |config|
+
+			config.build_settings.delete 'TARGETED_DEVICE_FAMILY'
+			config.build_settings.delete 'CODE_SIGN_IDENTITY'
+			config.build_settings.delete 'CODE_SIGN_IDENTITY[sdk=iphoneos*]'
+			config.build_settings.delete 'DEBUG_INFORMATION_FORMAT'
+			config.build_settings.delete 'PRODUCT_NAME'
+			config.build_settings.delete 'DEFINES_MODULE'
+
+		end
+		
+	end
+	
+	def Phoenx.set_project_build_settings_defaults(project)
+	
+		project.build_configuration_list.set_setting("FRAMEWORK_SEARCH_PATHS", "$(inherited)")
+		project.build_configuration_list.set_setting("CODE_SIGN_IDENTITY", "$(inherited)")
+		project.build_configuration_list.set_setting("CODE_SIGN_IDENTITY[sdk=iphoneos*]", "$(inherited)")
+		project.build_configuration_list.set_setting("DEBUG_INFORMATION_FORMAT", "$(inherited)")
+		project.build_configuration_list.set_setting("PRODUCT_NAME", "$(inherited)")
+		project.build_configuration_list.set_setting("DEFINES_MODULE", "$(inherited)")
 	
 	end
 

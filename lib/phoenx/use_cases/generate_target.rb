@@ -21,21 +21,7 @@ module Phoenx
 		
 		def add_support_files
 		
-			# Add Resource files
-			resources = []
-			@target_spec.support_files.each do |source|
-			
-				resources.concat Dir[source]
-			
-			end
-			
-			Phoenx.add_groups_for_files(@project, resources)
-
-			resources.each do |source|
-				
-				Phoenx.get_or_add_file(@project,source)
-				
-			end
+			Phoenx.get_or_add_files(@project, @target_spec.support_files)
 		
 		end
 		
@@ -106,12 +92,7 @@ module Phoenx
 		def add_resources
 	
 			# Add Resource files
-			resources = []
-			@target_spec.resources.each do |source|
-			
-				resources.concat Dir[source]
-			
-			end
+			resources = Phoenx.merge_files_array(@target_spec.resources)
 			
 			Phoenx.add_groups_for_files(@project, resources)
 
@@ -175,13 +156,7 @@ module Phoenx
 		def add_sources
 	
 			# Add Source files
-			
-			sources = []
-			@target_spec.sources.each do |source|
-			
-				sources.concat Dir[source]
-			
-			end
+			sources = Phoenx.merge_files_array(@target_spec.sources)
 			
 			Phoenx.add_groups_for_files(@project, sources)
 
@@ -203,12 +178,7 @@ module Phoenx
 		
 		def add_headers(header_files,attributes)
 		
-			headers = []
-			header_files.each do |header|
-			
-				headers.concat Dir[header]
-			
-			end
+			headers = Phoenx.merge_files_array(header_files)
 
 			Phoenx.add_groups_for_files(@project, headers)
 
@@ -247,9 +217,7 @@ module Phoenx
 			
 			Phoenx.add_groups_for_files(@project, @target_spec.config_files.values)
 		
-			@target_spec.config_files.keys.each do |config|
-			
-				file_name = @target_spec.config_files[config]
+			@target_spec.config_files.each do |config,file_name|
 
 				unless file_name == nil
 				
@@ -292,32 +260,14 @@ module Phoenx
 			scheme.test_action.code_coverage_enabled = true
 			scheme.add_build_target(self.target, true)
 			
-			#scheme.add_test_target(@target)
-			
 			scheme.save_as(@project_spec.project_file_name, @target_spec.name, false)	
 		
 		end
 		
 		def configure_target
 		
-			self.target.build_configuration_list.build_configurations.each do |config|
-
-				config.build_settings.delete 'TARGETED_DEVICE_FAMILY'
-				config.build_settings.delete 'CODE_SIGN_IDENTITY'
-				config.build_settings.delete 'CODE_SIGN_IDENTITY[sdk=iphoneos*]'
-				config.build_settings.delete 'DEBUG_INFORMATION_FORMAT'
-				config.build_settings.delete 'PRODUCT_NAME'
-				config.build_settings.delete 'DEFINES_MODULE'
-
-
-			end
-			
-			@project.build_configuration_list.set_setting("FRAMEWORK_SEARCH_PATHS", "$(inherited)")
-			@project.build_configuration_list.set_setting("CODE_SIGN_IDENTITY", "$(inherited)")
-			@project.build_configuration_list.set_setting("CODE_SIGN_IDENTITY[sdk=iphoneos*]", "$(inherited)")
-			@project.build_configuration_list.set_setting("DEBUG_INFORMATION_FORMAT", "$(inherited)")
-			@project.build_configuration_list.set_setting("PRODUCT_NAME", "$(inherited)")
-			@project.build_configuration_list.set_setting("DEFINES_MODULE", "$(inherited)")
+			Phoenx.set_target_build_settings_defaults(self.target)
+			Phoenx.set_project_build_settings_defaults(@project)
 		
 		end
 		
