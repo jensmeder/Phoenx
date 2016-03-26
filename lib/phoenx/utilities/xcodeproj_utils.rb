@@ -32,5 +32,23 @@ module Phoenx
 		end
 	
 	end
+	
+	def Phoenx.get_or_add_file(project,file)
+	
+		filename = File.basename(file)
+		dir = File.dirname(file)
+		
+		group = project.main_group.find_subpath(dir, false)
+		file_ref = group.find_file_by_path(filename)
+				
+		unless file_ref != nil
+				
+			file_ref = group.new_file(filename)
+				
+		end	
+		
+		return file_ref
+	
+	end
 
 end

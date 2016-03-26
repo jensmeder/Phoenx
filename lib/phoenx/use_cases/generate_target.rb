@@ -33,14 +33,7 @@ module Phoenx
 
 			resources.each do |source|
 				
-				group = @project.main_group.find_subpath(File.dirname(source), false)
-				file = group.find_file_by_path(File.basename(source))
-				
-				unless file != nil
-				
-					group.new_file(File.basename(source))
-				
-				end
+				Phoenx.get_or_add_file(@project,source)
 				
 			end
 		
@@ -54,7 +47,7 @@ module Phoenx
 
 			@target_spec.frameworks.each do |framework|
 
-				file = frameworks_group.new_reference(framework)
+				file = Phoenx.get_or_add_file(@project,framework)
 				@framework_files << file
 			
 				self.target.frameworks_build_phases.add_file_reference(file)
@@ -63,7 +56,7 @@ module Phoenx
 			
 			@target_spec.libraries.each do |framework|
 
-				file = frameworks_group.new_reference(framework)
+				file = Phoenx.get_or_add_file(@project,framework)
 				self.target.frameworks_build_phases.add_file_reference(file)
 
 			end
@@ -194,9 +187,7 @@ module Phoenx
 
 			sources.each do |source|
 
-				group = @project.main_group.find_subpath(File.dirname(source), true)
-				group.set_path(File.dirname(source).split("/").last)
-				file = group.new_file(File.basename(source))
+				file = Phoenx.get_or_add_file(@project,source)
 	
 				# Add to Compile sources phase
 
@@ -223,14 +214,7 @@ module Phoenx
 
 			headers.each do |header|
 			
-				group = @project.main_group.find_subpath(File.dirname(header), true)
-				file = group.find_file_by_path(File.basename(header))
-				
-				unless file != nil
-				
-					file = group.new_file(File.basename(header))
-				
-				end
+				file = Phoenx.get_or_add_file(@project,header)
 	
 				build_file = self.target.headers_build_phase.add_file_reference(file, true)
 				build_file.settings = attributes
@@ -269,15 +253,7 @@ module Phoenx
 
 				unless file_name == nil
 				
-					g = @project.main_group.find_subpath(File.dirname(file_name), false)
-
-					file = g.find_file_by_path(File.basename(file_name))
-					
-					unless file != nil
-					
-						file = g.new_file(File.basename(file_name))
-					
-					end
+					file = Phoenx.get_or_add_file(@project,file_name)
 					
 					configuration = self.target.build_configuration_list[config]
 					
