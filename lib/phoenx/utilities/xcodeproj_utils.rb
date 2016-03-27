@@ -69,25 +69,23 @@ module Phoenx
 		
 		target.build_configuration_list.build_configurations.each do |config|
 
-			config.build_settings.delete 'TARGETED_DEVICE_FAMILY'
-			config.build_settings.delete 'CODE_SIGN_IDENTITY'
-			config.build_settings.delete 'CODE_SIGN_IDENTITY[sdk=iphoneos*]'
-			config.build_settings.delete 'DEBUG_INFORMATION_FORMAT'
-			config.build_settings.delete 'PRODUCT_NAME'
-			config.build_settings.delete 'DEFINES_MODULE'
+			config.build_settings = {}
 
 		end
 		
 	end
 	
-	def Phoenx.set_project_build_settings_defaults(project)
+	def Phoenx.target_for_name(project,name)
 	
-		project.build_configuration_list.set_setting("FRAMEWORK_SEARCH_PATHS", "$(inherited)")
-		project.build_configuration_list.set_setting("CODE_SIGN_IDENTITY", "$(inherited)")
-		project.build_configuration_list.set_setting("CODE_SIGN_IDENTITY[sdk=iphoneos*]", "$(inherited)")
-		project.build_configuration_list.set_setting("DEBUG_INFORMATION_FORMAT", "$(inherited)")
-		project.build_configuration_list.set_setting("PRODUCT_NAME", "$(inherited)")
-		project.build_configuration_list.set_setting("DEFINES_MODULE", "$(inherited)")
+		project.targets.each do |t|
+		
+			if t.name == name
+			
+				return t
+			
+			end
+		
+		end
 	
 	end
 

@@ -12,11 +12,13 @@ module Phoenx
 		attr_accessor :pre_build_scripts
 		attr_accessor :post_build_scripts
 		attr_accessor :support_files
+		attr_reader   :dependencies
 		
 		attr_reader :config_files
 		
 		def initialize
 		
+			@dependencies = []
 			@config_files = {}
 			@frameworks = []
 			@libraries = []
@@ -27,6 +29,12 @@ module Phoenx
 			@resources = []
 			@sources = []
 			@support_files = []
+		
+		end
+		
+		def dependency(target_name, embed = true, path = nil)
+		
+			dependencies << Dependency.new(target_name, embed, path)
 		
 		end
 	

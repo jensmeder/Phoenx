@@ -267,7 +267,6 @@ module Phoenx
 		def configure_target
 		
 			Phoenx.set_target_build_settings_defaults(self.target)
-			Phoenx.set_project_build_settings_defaults(@project)
 		
 		end
 		
@@ -282,15 +281,30 @@ module Phoenx
 		end
 		
 		def add_sub_projects
-	
-			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT, true)
 
-			@target_spec.sub_projects.each do |sub_project|
+			@target_spec.dependencies.each do |dp|
 
-				path = sub_project
-				file = frameworks_group.new_reference(path)
-				project = Xcodeproj::Project::open(path)
-				self.target.add_dependency(project.targets.first)
+				proj = nil
+				
+				if dp.path == nil
+				
+					proj = @project
+				else
+				
+					file_ref = @project.main_group.find_file_by_path(dp.path)
+				
+					unless file_ref != nil
+				
+						@project.main_group.new_file(dp.path)
+				
+					end
+
+					proj = Xcodeproj::Project::open(dp.path)
+					
+				end
+				
+				target = Phoenx.target_for_name(proj,dp.target_name)
+				self.target.add_dependency(target)
 				
 			end
 	
@@ -358,20 +372,54 @@ module Phoenx
 		:copy_frameworks
 		
 		def add_sub_projects
-	
-			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT, true)
 
-			@target_spec.sub_projects.each do |sub_project|
-
-				path = sub_project
-
-				file = frameworks_group.new_reference(path)
-				project = Xcodeproj::Project::open(path)
-				self.target.add_dependency(project.targets.first)
-
-				build_file = @copy_frameworks.add_file_reference(file.file_reference_proxies.first)
-				build_file.settings = ATTRIBUTES_CODE_SIGN_ON_COPY
+			super
+			
+			@target_spec.dependencies.each do |dp|
+			
+				file = nil
 				
+				if dp.embed == false
+				
+					next
+				
+				end
+				
+				if dp.path == nil
+				
+					# Copy internal references
+				
+					target = Phoenx.target_for_name(@project,dp.target_name)
+					
+					build_file = @copy_frameworks.add_file_reference(target.product_reference)
+					build_file.settings = ATTRIBUTES_CODE_SIGN_ON_COPY
+				
+				else
+				
+					# Copy external products
+				
+					proj_file = @project.main_group.find_file_by_path(dp.path)
+					proj = Xcodeproj::Project::open(dp.path)
+					
+					target = Phoenx.target_for_name(proj,dp.target_name)
+					
+					proj_file.file_reference_proxies.each do |e|
+					
+						puts e.remote_ref
+					
+						if e.remote_ref.remote_global_id_string == target.product_reference.uuid
+							
+							build_file = @copy_frameworks.add_file_reference(e)
+							build_file.settings = ATTRIBUTES_CODE_SIGN_ON_COPY
+						
+						end
+					
+					end
+					
+				end
+				
+				
+			
 			end
 	
 		end

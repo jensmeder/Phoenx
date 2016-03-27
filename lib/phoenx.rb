@@ -13,6 +13,7 @@ require 'phoenx/entities/target'
 require 'phoenx/entities/configuration'
 require 'phoenx/entities/scheme'
 require 'phoenx/entities/workspace'
+require 'phoenx/entities/dependency'
 
 require 'phoenx/use_cases/generate_workspace'
 require 'phoenx/use_cases/generate_project'
