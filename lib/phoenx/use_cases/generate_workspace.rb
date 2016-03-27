@@ -14,11 +14,11 @@ module Phoenx
 		
 		def generate_workspace
 		
-			workspace = Xcodeproj::Workspace.new(@workspace.main_project + "." + XCODE_PROJECT_EXTENSION)
+			workspace = Xcodeproj::Workspace.new(@workspace.main_project_path + @workspace.main_project_name + "." + XCODE_PROJECT_EXTENSION)
 
-			@project_files.each do |project|
+			@workspace.projects.each do |key,value| 
 
-				workspace << project
+				workspace << value + key + "." + XCODE_PROJECT_EXTENSION
 
 			end
 
@@ -26,29 +26,39 @@ module Phoenx
 		
 		end
 		
+		def generate_project(name, value)
+		
+			previous = Dir.pwd
+			path = value
+			if path == nil
+		
+				path = Dir.pwd
+				
+			end
+				
+			Dir.chdir(path)
+				
+			specs = Dir[name + '.' + PROJECT_EXTENSION]
+
+			file = File.read(specs.first)
+			spec = eval(file)
+			
+			generator = Phoenx::GenerateProject.new spec, @workspace
+			generator.build
+			
+			Dir.chdir(previous)
+		
+		end
+		
 		def generate_projects
 		
-			@workspace.projects.keys.each do |key,value| 
+			@workspace.projects.each do |key,value| 
 			
-				path = value
-				if path == nil
-				
-					path = Dir.pwd
-				
-				end
-				
-				Dir.chdir(path)
-				specs = Dir['*.' + PROJECT_EXTENSION]
-			
-				file = File.read(specs.first)
-				spec = eval(file)
-			
-				generator = Phoenx::GenerateProject.new spec, @workspace
-				generator.build
-			
-				Dir.chdir(path)
+				self.generate_project(key,value)
 			
 			end
+			
+			self.generate_project(@workspace.main_project_name,@workspace.main_project_path)
 		
 		end
 		

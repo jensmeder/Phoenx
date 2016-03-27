@@ -100,7 +100,7 @@ module Phoenx
 			
 				file = nil
 				
-				if self.is_bundle?(source)
+				if Phoenx.is_bundle?(source)
 				
 					parts = source.split("/")
 					
@@ -108,7 +108,7 @@ module Phoenx
 					
 					parts.each do |part|
 						
-						if self.is_bundle?(part)
+						if Phoenx.is_bundle?(part)
 							
 							file = group.find_file_by_path(part)
 							
@@ -267,6 +267,7 @@ module Phoenx
 		def configure_target
 		
 			Phoenx.set_target_build_settings_defaults(self.target)
+			Phoenx.set_project_build_settings_defaults(@project)
 		
 		end
 		
@@ -281,6 +282,8 @@ module Phoenx
 		end
 		
 		def add_sub_projects
+			
+			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT,false)
 
 			@target_spec.dependencies.each do |dp|
 
@@ -291,11 +294,11 @@ module Phoenx
 					proj = @project
 				else
 				
-					file_ref = @project.main_group.find_file_by_path(dp.path)
+					file_ref = frameworks_group.find_file_by_path(dp.path)
 				
 					unless file_ref != nil
 				
-						@project.main_group.new_file(dp.path)
+						frameworks_group.new_file(dp.path)
 				
 					end
 
@@ -375,6 +378,8 @@ module Phoenx
 
 			super
 			
+			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT,false)
+			
 			@target_spec.dependencies.each do |dp|
 			
 				file = nil
@@ -398,14 +403,12 @@ module Phoenx
 				
 					# Copy external products
 				
-					proj_file = @project.main_group.find_file_by_path(dp.path)
+					proj_file = frameworks_group.find_file_by_path(dp.path)
 					proj = Xcodeproj::Project::open(dp.path)
 					
 					target = Phoenx.target_for_name(proj,dp.target_name)
 					
 					proj_file.file_reference_proxies.each do |e|
-					
-						puts e.remote_ref
 					
 						if e.remote_ref.remote_global_id_string == target.product_reference.uuid
 							

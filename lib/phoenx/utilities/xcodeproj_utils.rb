@@ -17,7 +17,7 @@ module Phoenx
 				
 			groups.each do |g|
 			
-				if self.is_bundle?(g)
+				if Phoenx.is_bundle?(g)
 						
 					break
 							
@@ -68,6 +68,16 @@ module Phoenx
 	def Phoenx.set_target_build_settings_defaults(target)
 		
 		target.build_configuration_list.build_configurations.each do |config|
+
+			config.build_settings = {}
+
+		end
+		
+	end
+	
+	def Phoenx.set_project_build_settings_defaults(project)
+		
+		project.build_configuration_list.build_configurations.each do |config|
 
 			config.build_settings = {}
 
