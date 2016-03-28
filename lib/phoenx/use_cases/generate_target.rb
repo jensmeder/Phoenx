@@ -5,15 +5,13 @@ module Phoenx
 		attr_reader :project
 		
 		attr_reader :target_spec
-		attr_reader :workspace_spec
 		attr_reader :project_spec
 		attr_reader :framework_files
 		
-		def initialize(project, target_spec, workspace_spec, project_spec)
+		def initialize(project, target_spec, project_spec)
 		
 			@project = project
 			@target_spec = target_spec
-			@workspace_spec = workspace_spec
 			@project_spec = project_spec
 			@framework_files = []
 		
@@ -342,7 +340,7 @@ module Phoenx
 		
 			@target_spec.test_targets.each do |test_target_spec|
 			
-				builder = TestTargetBuilder.new(@target, @project, test_target_spec, @workspace_spec, @project_spec, @target_spec, self.framework_files)
+				builder = TestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
 				builder.build
 				
 				@test_target = builder.target
@@ -483,9 +481,9 @@ module Phoenx
 		:main_target_spec
 		:main_target_frameworks_files
 		
-		def initialize(main_target, project, target_spec, workspace_spec, project_spec, main_target_spec, main_target_frameworks_files)
+		def initialize(main_target, project, target_spec, project_spec, main_target_spec, main_target_frameworks_files)
 		
-			super(project, target_spec, workspace_spec, project_spec)
+			super(project, target_spec, project_spec)
 			@main_target = main_target
 			@main_target_spec = main_target_spec
 			@main_target_frameworks_files = main_target_frameworks_files

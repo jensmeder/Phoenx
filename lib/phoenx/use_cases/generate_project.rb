@@ -3,13 +3,11 @@ module Phoenx
 	class GenerateProject
 	
 		:project_spec
-		:workspace_spec
 		:project
 	
-		def initialize(project_spec, workspace_spec)
+		def initialize(project_spec)
 		
 			@project_spec = project_spec
-			@workspace_spec = workspace_spec
 		
 		end
 		
@@ -47,12 +45,12 @@ module Phoenx
 
 				if target.target_type == :application
 				
-					builder = ApplicationTargetBuilder.new @project, target, @workspace_spec, @project_spec
+					builder = ApplicationTargetBuilder.new @project, target, @project_spec
 					builder.build
 				
 				elsif target.target_type == :framework
 
-					builder = FrameworkTargetBuilder.new @project, target, @workspace_spec, @project_spec
+					builder = FrameworkTargetBuilder.new @project, target, @project_spec
 					builder.build
 				
 				end

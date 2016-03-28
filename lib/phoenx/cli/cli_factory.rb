@@ -63,6 +63,66 @@ module Phoenx
 				return command
 
 			end
+			
+			def project_command
+
+				command = Phoenx::Cli::Command.new "project", "Builds the project" do
+	
+					command.print
+					exit
+
+				end
+
+				command.base_command = "phoenx project"
+				command.usage = "Generates the xcodeproj file from the pxproject specification."
+
+				# Add workspace build command
+
+				build_command = Phoenx::Cli::Command.new "build", "Builds the project" do
+
+					projects = Dir["*." + Phoenx::PROJECT_EXTENSION]
+	
+					if projects.count < 1
+
+						puts "Error: No project spec found!".red
+						exit
+
+					end
+
+					project = eval File.read(projects.first)
+	
+					if !project
+
+						puts "Error: No project spec found!".red
+						exit
+
+					end
+
+					puts "\r\nGenerating project".green
+		
+					generator = Phoenx::GenerateProject.new project
+					generator.build
+	
+					exit
+
+				end
+	
+
+				build_command.base_command = "phoenx project"
+				build_command.usage = "Generates the xcodeproj file."
+
+				build_help_option = Phoenx::Cli::Option.new("--help", "-h","Shows this help",false) do
+					build_command.print
+					exit
+				end
+
+				build_command.add_option build_help_option
+	
+				command.add_command build_command
+	
+				return command
+
+			end
 		
 			def cli
 			
@@ -75,20 +135,6 @@ module Phoenx
 				end
 
 				cli.base_command = "phoenx"
-
-				# Add project command
-
-				project_command = Phoenx::Cli::Command.new "project", "Builds the project" do
-	
-					project_command.print
-					exit
-
-				end
-
-				project_command.base_command = "phoenx project"
-				project_command.usage = "Initializes the project by generating the xcodeproj file."
-
-
 
 				# Add version and help options
 
@@ -106,8 +152,8 @@ module Phoenx
 				cli.add_option version_option
 				cli.add_option help_option
 
-				cli.add_command workspace_command
-				cli.add_command project_command
+				cli.add_command self.workspace_command
+				cli.add_command self.project_command
 				
 				return cli
 			

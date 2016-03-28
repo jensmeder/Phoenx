@@ -43,7 +43,7 @@ module Phoenx
 			file = File.read(specs.first)
 			spec = eval(file)
 			
-			generator = Phoenx::GenerateProject.new spec, @workspace
+			generator = Phoenx::GenerateProject.new spec
 			generator.build
 			
 			Dir.chdir(previous)
