@@ -10,7 +10,8 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
-
+vendor/
+.bundle
 ## Specific to RubyMotion:
 .dat*
 .repl_history
