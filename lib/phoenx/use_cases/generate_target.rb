@@ -30,8 +30,11 @@ module Phoenx
 			# Add Framework dependencies
 
 			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT, true)
+			Phoenx.add_groups_for_files(@project,@target_spec.frameworks)
 
-			@target_spec.frameworks.each do |framework|
+			frameworks = Phoenx.merge_files_array(@target_spec.frameworks)
+
+			frameworks.each do |framework|
 
 				file = Phoenx.get_or_add_file(@project,framework)
 				@framework_files << file
@@ -40,7 +43,10 @@ module Phoenx
 
 			end
 			
-			@target_spec.libraries.each do |framework|
+			Phoenx.add_groups_for_files(@project, @target_spec.libraries)
+			libraries = Phoenx.merge_files_array(@target_spec.libraries)
+			
+			libraries.each do |framework|
 
 				file = Phoenx.get_or_add_file(@project,framework)
 				self.target.frameworks_build_phases.add_file_reference(file)
