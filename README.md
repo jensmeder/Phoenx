@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/phoenx.svg)](https://badge.fury.io/rb/phoenx)
+
 # Phoenx
 
 Phoenx generates Xcode projects (`*.xcodeproj`) and workspaces (`*.xcworkspace`) for iOS, OSX, and tvOS using specification and xcconfig files. Specify your project once and never worry about broken Xcode projects or merge conflicts in pbxproj files ever again. 
