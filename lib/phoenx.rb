@@ -7,6 +7,7 @@ require 'phoenx/constants'
 
 require 'phoenx/cli/option'
 require 'phoenx/cli/command'
+require 'phoenx/cli/cli_factory'
 
 require 'phoenx/entities/project'
 require 'phoenx/entities/target'
