@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.date     	 = Date.today
   spec.authors       = ["Jens Meder"]
   spec.email         = ["gems@jensmeder.de"]
-  spec.description	 = "An Xcode Project Generator"
+  spec.description	 = "An Xcode Project and Workspace Generator"
   spec.summary       = "Phoenx generates Xcode projects (*.xcodeproj) and workspaces (*.xcworkspace) for iOS, OSX, and tvOS using specification and xcconfig files. Specify your project once and never worry about broken Xcode projects or merge conflicts in pbxproj files ever again."
   spec.homepage      = "https://www.github.com/jensmeder/Phoenx"
   spec.license       = "MIT"
