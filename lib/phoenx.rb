@@ -1,5 +1,4 @@
 require 'colored'
-require 'git'
 require 'xcodeproj'
 
 require 'phoenx/gem_version'
