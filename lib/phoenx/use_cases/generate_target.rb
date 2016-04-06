@@ -356,7 +356,6 @@ module Phoenx
 			self.add_private_headers
 			self.add_project_headers
 			self.add_resources
-			self.configure_target
 			self.add_config_files
 			self.add_sub_projects
 			self.add_system_dependencies
@@ -368,6 +367,7 @@ module Phoenx
 			self.add_schemes
 			self.add_support_files
 			self.sort_build_phases
+			self.configure_target
 		
 		end
 	
