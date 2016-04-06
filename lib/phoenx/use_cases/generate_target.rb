@@ -239,6 +239,13 @@ module Phoenx
 		
 		end
 		
+		def configure_target
+		
+			Phoenx.set_target_build_settings_defaults(self.target)
+			Phoenx.set_project_build_settings_defaults(@project)
+		
+		end
+		
 		def build
 		
 		end
@@ -265,13 +272,6 @@ module Phoenx
 			scheme.add_build_target(self.target, true)
 			
 			scheme.save_as(@project_spec.project_file_name, @target_spec.name, false)	
-		
-		end
-		
-		def configure_target
-		
-			Phoenx.set_target_build_settings_defaults(self.target)
-			Phoenx.set_project_build_settings_defaults(@project)
 		
 		end
 		
@@ -538,6 +538,7 @@ module Phoenx
 			
 			# Add target dependency.
 			@target.add_dependency(@main_target)
+			self.configure_target
 	
 		end
 		
