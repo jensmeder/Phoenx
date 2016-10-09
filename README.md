@@ -48,14 +48,17 @@ end
 
 ```
 
+As soon as you run `phoenx project build` Phoenx will generate a new `xcodeproj` file based on the above definition. Easy as that!
+
 ## Overview
 
 1. [Features](README.md#1-features)
 2. [Requirements](README.md#2-requirements)
 3. [Installation](README.md#3-installation)
 4. [Documentation](README.md#4-documentation)
-5. [Credits](README.md#5-credits)
-6. [License](README.md#6-license)
+5. [Available Commands](README.md#5-available-commands)
+6. [Credits](README.md#6-credits)
+7. [License](README.md#7-license)
 
 ## 1. Features
 
@@ -78,9 +81,54 @@ $ gem install phoenx
 
 ## 4. Documentation
 
-## 5. Credits
+You can find more details on how to use phoenx in the [Wiki](https://github.com/jensmeder/Phoenx/wiki).
 
-## 6. License
+## 5. Available Commands
+
+```
+$ phoenx [command] [options]
+```
+
+*Commands*
+
+     workspace           Workspace related commands
+     project             Project related commands
+
+*Options*
+
+     --version, -v       Shows version information
+     --help, -h          Shows this help
+
+### Project
+
+```
+$ phoenx project [command] [options]
+```
+
+*Commands*
+
+     build               Builds the project
+     extract             Extracts all build settings.
+     
+*Options*
+
+     --help, -h          Shows this help
+
+### Workspace
+
+     $ phoenx workspace [command] [options]
+
+*Commands*
+
+     build               Builds the workspace and projects
+     
+*Options*
+
+     --help, -h          Shows this help
+
+## 6. Credits
+
+## 7. License
 
 The MIT License (MIT)
 
