@@ -1,6 +1,4 @@
 [![Gem Version](https://badge.fury.io/rb/phoenx.svg)](https://badge.fury.io/rb/phoenx)
-[![Build Status](https://travis-ci.org/jensmeder/Phoenx.svg?branch=master)](https://travis-ci.org/jensmeder/Phoenx)
-[![codecov.io](https://codecov.io/github/jensmeder/Phoenx/coverage.svg?branch=master)](https://codecov.io/github/jensmeder/Phoenx?branch=master)
 
 # Phoenx
 
@@ -62,8 +60,13 @@ end
 ## 1. Features
 
 * non intrusive: If you decide to skip using Phoenx there is no need to change anything in your projects or workspaces. 
+* extract build settings from xcodeproj to xcconfig files
+* generate xcodeproj and xcworkspace files using `pxproject` and `pxworkspace` specification files
 
 ## 2. Requirements
+
+* Ruby 2.0.0 or higher
+* Xcode 7 or higher
 
 ## 3. Installation
 
