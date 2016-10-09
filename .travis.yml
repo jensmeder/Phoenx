@@ -1,8 +1,5 @@
 language: ruby
 rvm:
   - 2.2.1
-before_install: 
-- gem install bundler -v 1.11.2
 script: 
-- bundle install
-- bundle exec rspec --default-path spec
+- gem build phoenx.gemspec
