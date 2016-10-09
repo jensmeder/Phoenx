@@ -1,6 +1,4 @@
 [![Gem Version](https://badge.fury.io/rb/phoenx.svg)](https://badge.fury.io/rb/phoenx)
-[![Build Status](https://travis-ci.org/jensmeder/Phoenx.svg?branch=master)](https://travis-ci.org/jensmeder/Phoenx)
-[![codecov.io](https://codecov.io/github/jensmeder/Phoenx/coverage.svg?branch=master)](https://codecov.io/github/jensmeder/Phoenx?branch=master)
 
 # Phoenx
 
