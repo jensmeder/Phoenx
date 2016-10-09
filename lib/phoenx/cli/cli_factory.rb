@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Phoenx
 
 	module Cli
@@ -76,7 +78,7 @@ module Phoenx
 				command.base_command = "phoenx project"
 				command.usage = "Generates the xcodeproj file from the pxproject specification."
 
-				# Add workspace build command
+				# Add project build command
 
 				build_command = Phoenx::Cli::Command.new "build", "Builds the project" do
 
@@ -119,6 +121,41 @@ module Phoenx
 				build_command.add_option build_help_option
 	
 				command.add_command build_command
+				
+				# Add project extract command
+
+				extract_command = Phoenx::Cli::Command.new "extract", "Extracts all build settings." do
+
+					projects = Dir["*.xcodeproj"]
+					
+					if projects.length < 1
+					
+						puts "No Xcode project found.".red
+						exit
+					
+					end
+					
+					project = Xcodeproj::Project::open(projects[0])
+					
+					extractor = Phoenx::ExtractBuildSettings.new project
+					extractor.extract
+	
+					exit
+
+				end
+	
+
+				extract_command.base_command = "phoenx project"
+				extract_command.usage = "Extracts all project and scheme build settings to separate xcconfig files"
+
+				extract_help_option = Phoenx::Cli::Option.new("--help", "-h","Shows this help",false) do
+					extract_command.print
+					exit
+				end
+
+				extract_command.add_option extract_help_option
+	
+				command.add_command extract_command
 	
 				return command
 
