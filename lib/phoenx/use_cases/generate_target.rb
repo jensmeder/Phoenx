@@ -434,9 +434,9 @@ module Phoenx
 		def build
 		
 			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
-			@copy_frameworks = @target.new_copy_files_build_phase
+			@copy_frameworks = @target.new_copy_files_build_phase "Embed Frameworks"
 			@copy_frameworks.symbol_dst_subfolder_spec = :frameworks
-			
+
 			super()
 			
 			self.framework_files.each do |file|
@@ -517,7 +517,7 @@ module Phoenx
 			self.add_resources
 			self.add_support_files
 			
-			copy_frameworks = @target.new_copy_files_build_phase
+			copy_frameworks = @target.new_copy_files_build_phase "Embed Frameworks"
 			copy_frameworks.symbol_dst_subfolder_spec = :frameworks
 		
 			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT, false)

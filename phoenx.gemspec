@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
 
   spec.executables   << "phoenx"
 
-  spec.add_runtime_dependency "xcodeproj", "~> 1.3.1"
+  spec.add_runtime_dependency "xcodeproj", "~> 1.3"
   spec.add_runtime_dependency "colored", "~> 1.2"
   
   spec.add_development_dependency "bundler", "~> 1.11"
