@@ -1,3 +1,5 @@
+require 'colored'
+
 module Phoenx
 
 	class GenerateWorkspace
@@ -28,25 +30,31 @@ module Phoenx
 		
 		def generate_project(name, value)
 		
-			previous = Dir.pwd
 			path = value
+			
 			if path == nil
-		
-				path = Dir.pwd
-				
+			
+				path = '.'
+			
 			end
-				
-			Dir.chdir(path)
-				
-			specs = Dir[name + '.' + PROJECT_EXTENSION]
+		
+			previous = Dir.pwd
 
-			file = File.read(specs.first)
-			spec = eval(file)
+			Dir.chdir(path) do
+				
+				specs = Dir[name + '.' + PROJECT_EXTENSION]
+				
+				puts "Processing ".green + specs.first.bold
+
+				file = File.read(specs.first)
+				spec = eval(file)
 			
-			generator = Phoenx::GenerateProject.new spec
-			generator.build
+				generator = Phoenx::GenerateProject.new spec
+				generator.build
+			end
 			
-			Dir.chdir(previous)
+			# Monkey patch due to bug in Xcode 8 that prevents chdir to switch back to previous dir
+			Dir.cp_chdir previous
 		
 		end
 		

@@ -40,7 +40,7 @@ module Phoenx
 
 					end
 
-					puts "\r\nGenerating projects and workspace".green
+					puts "\r\nGenerating workspace ".green + workspace.name.bold + ".xcworkspace".bold
 		
 					generator = Phoenx::GenerateWorkspace.new workspace
 					generator.generate
@@ -100,7 +100,7 @@ module Phoenx
 
 					end
 
-					puts "\r\nGenerating project".green
+					puts "\r\nGenerating project ".green + project.project_name.bold + ".xcodeproj".bold
 		
 					generator = Phoenx::GenerateProject.new project
 					generator.build
