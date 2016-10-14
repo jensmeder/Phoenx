@@ -13,6 +13,7 @@ module Phoenx
 		files.each do |path|
 			
 			groups = File.dirname(path).split("/")
+			groups.delete("..")
 			concate = ""
 				
 			groups.each do |g|
@@ -47,10 +48,18 @@ module Phoenx
 	
 	end
 	
+	def Phoenx.get_absolute_path(path)
+	
+		groups = File.dirname(path).split("/")
+		groups.delete("..")
+		return groups.join("/")
+	
+	end
+	
 	def Phoenx.get_or_add_file(project,file)
 	
 		filename = File.basename(file)
-		dir = File.dirname(file)
+		dir = Phoenx.get_absolute_path(file)	
 		
 		group = project.main_group.find_subpath(dir, false)
 		file_ref = group.find_file_by_path(filename)
