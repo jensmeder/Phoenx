@@ -22,6 +22,7 @@ module Phoenx
 			# Build Project
 
 			@project = Xcodeproj::Project::new(@project_spec.project_file_name)
+			@project.root_object.attributes = {"CLASSPREFIX" => @project_spec.class_prefix, "ORGANIZATIONNAME" => @project_spec.organization}
 			
 			self.generate_configurations
 			self.add_config_files
