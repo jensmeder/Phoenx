@@ -37,8 +37,6 @@ module Phoenx
 				path = '.'
 			
 			end
-		
-			previous = Dir.pwd
 
 			Dir.chdir(path) do
 				
@@ -52,9 +50,6 @@ module Phoenx
 				generator = Phoenx::GenerateProject.new spec
 				generator.build
 			end
-			
-			# Monkey patch due to bug in Xcode 8 that prevents chdir to switch back to previous dir
-			Dir.cp_chdir previous
 		
 		end
 		
