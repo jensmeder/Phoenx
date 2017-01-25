@@ -47,7 +47,7 @@ module Phoenx
 				file_name = name + '.' + PROJECT_EXTENSION
 				specs = Dir[file_name]
 				
-				puts "Processing ".green + specs.first.bold
+				puts "> Project ".green + name.bold
 
 				abort "Missing project specification ".red + (path + file_name).bold unless specs.first
 

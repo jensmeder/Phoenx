@@ -380,6 +380,9 @@ module Phoenx
 		
 		def build
 			
+
+			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
+
 			self.add_sources
 			self.add_public_headers
 			self.add_private_headers
