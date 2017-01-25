@@ -12,6 +12,8 @@ module Phoenx
 	
 		files.each do |path|
 			
+			abort "Missing file ".red + path.bold unless File.exists?(path)
+
 			groups = File.dirname(path).split("/")
 			groups.delete("..")
 			concate = ""
@@ -58,6 +60,8 @@ module Phoenx
 	
 	def Phoenx.get_or_add_file(project,file)
 	
+		abort "Missing file ".red + path.bold unless File.exists?(file)
+
 		filename = File.basename(file)
 		dir = Phoenx.get_absolute_path(file)	
 		
@@ -105,6 +109,8 @@ module Phoenx
 			end
 		
 		end
+
+		return nil
 	
 	end
 

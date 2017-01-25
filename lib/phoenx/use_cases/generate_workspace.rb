@@ -40,11 +40,16 @@ module Phoenx
 		
 			previous = Dir.pwd
 
+			abort "Missing project folder ".red + path.bold unless Dir.exists?(path)
+
 			Dir.chdir(path) do
 				
-				specs = Dir[name + '.' + PROJECT_EXTENSION]
+				file_name = name + '.' + PROJECT_EXTENSION
+				specs = Dir[file_name]
 				
 				puts "Processing ".green + specs.first.bold
+
+				abort "Missing project specification ".red + (path + file_name).bold unless specs.first
 
 				file = File.read(specs.first)
 				spec = eval(file)
