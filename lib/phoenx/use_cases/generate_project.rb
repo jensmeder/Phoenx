@@ -15,6 +15,7 @@ module Phoenx
 		
 			@project_spec.pre_install_scripts.each do |pre_script|
 			
+				abort "Missing pre install script ".red + pre_script.bold unless File.exists?(pre_script)
 				puts `./#{pre_script}`
 			
 			end
@@ -33,6 +34,7 @@ module Phoenx
 			
 			@project_spec.post_install_scripts.each do |post_script|
 			
+				abort "Missing post install script ".red + post_script.bold unless File.exists?(post_script)
 				puts `./#{post_script}`
 			
 			end	
@@ -90,10 +92,12 @@ module Phoenx
 					end
 					
 					configuration = @project.build_configuration_list[config]
-					
-					unless configuration == nil
-						configuration.base_configuration_reference = file
+
+					unless configuration
+						abort "Config file assigned to invalid configuration '#{config}'' ".red + file_name.bold
 					end
+					
+					configuration.base_configuration_reference = file
 				
 				end
 			

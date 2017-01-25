@@ -98,6 +98,10 @@ module Phoenx
 			# Add Resource files
 			resources = Phoenx.merge_files_array(@target_spec.resources)
 			
+			unless !@target_spec.resources || @target_spec.resources.empty? || !resources.empty?
+				puts "No resources found".yellow
+			end
+
 			Phoenx.add_groups_for_files(@project, resources)
 
 			resources.each do |source|
@@ -162,6 +166,10 @@ module Phoenx
 			# Add Source files
 			sources = Phoenx.merge_files_array(@target_spec.sources)
 			
+			unless !@target_spec.sources || @target_spec.sources.empty? || !sources.empty?
+				puts "No sources found".yellow
+			end
+
 			Phoenx.add_groups_for_files(@project, sources)
 
 			sources.each do |source|
@@ -183,6 +191,10 @@ module Phoenx
 		def add_headers(header_files,attributes)
 		
 			headers = Phoenx.merge_files_array(header_files)
+
+			unless !header_files || header_files.empty? || !headers.empty?
+				puts "No #{attributes["ATTRIBUTES"].first} headers found".yellow
+			end
 
 			Phoenx.add_groups_for_files(@project, headers)
 
@@ -228,10 +240,12 @@ module Phoenx
 					file = Phoenx.get_or_add_file(@project,file_name)
 					
 					configuration = self.target.build_configuration_list[config]
-					
-					unless configuration == nil
-						configuration.base_configuration_reference = file
+
+					unless configuration
+						abort "Config file assigned to invalid configuration '#{config}' ".red + file_name.bold
 					end
+					
+					configuration.base_configuration_reference = file
 				
 				end
 			
@@ -298,6 +312,8 @@ module Phoenx
 					proj = @project
 				else
 				
+					abort "Missing dependency ".red + dp.path.bold unless File.exists?(dp.path)
+
 					file_ref = frameworks_group.find_file_by_path(dp.path)
 				
 					unless file_ref != nil
@@ -311,6 +327,9 @@ module Phoenx
 				end
 				
 				target = Phoenx.target_for_name(proj,dp.target_name)
+				
+				abort "Missing target for dependency '#{dp.path}' ".red + dp.target_name.bold unless target
+
 				self.target.add_dependency(target)
 				
 			end
@@ -327,8 +346,18 @@ module Phoenx
 				scheme.add_build_target(self.target, true)
 				scheme.add_test_target(@test_target)
 				
-				scheme.archive_action.build_configuration = self.target.build_configuration_list[s.archive_configuration]
-				scheme.launch_action.build_configuration = self.target.build_configuration_list[s.launch_configuration]
+				archive_configuration = self.target.build_configuration_list[s.archive_configuration]
+				unless archive_configuration
+					abort "Invalid archive configuration assigned for scheme '#{s.name}' ".red + s.archive_configuration.bold
+				end
+
+				launch_configuration = self.target.build_configuration_list[s.launch_configuration]
+				unless launch_configuration
+					abort "Invalid launch configuration assigned for scheme '#{s.name}' ".red + s.launch_configuration.bold
+				end
+
+				scheme.archive_action.build_configuration = archive_configuration
+				scheme.launch_action.build_configuration = launch_configuration
 			
 				scheme.save_as(@project_spec.project_file_name, s.name, false)
 			
@@ -351,6 +380,9 @@ module Phoenx
 		
 		def build
 			
+
+			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
+
 			self.add_sources
 			self.add_public_headers
 			self.add_private_headers

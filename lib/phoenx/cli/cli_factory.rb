@@ -40,7 +40,7 @@ module Phoenx
 
 					end
 
-					puts "\r\nGenerating workspace ".green + workspace.name.bold + ".xcworkspace".bold
+					puts "\r\nWorkspace ".green + workspace.name.bold
 		
 					generator = Phoenx::GenerateWorkspace.new workspace
 					generator.generate
