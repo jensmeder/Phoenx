@@ -98,6 +98,10 @@ module Phoenx
 			# Add Resource files
 			resources = Phoenx.merge_files_array(@target_spec.resources)
 			
+			unless !@target_spec.resources || @target_spec.resources.empty? || !resources.empty?
+				puts "No resources found".yellow
+			end
+
 			Phoenx.add_groups_for_files(@project, resources)
 
 			resources.each do |source|
@@ -162,6 +166,10 @@ module Phoenx
 			# Add Source files
 			sources = Phoenx.merge_files_array(@target_spec.sources)
 			
+			unless !@target_spec.sources || @target_spec.sources.empty? || !sources.empty?
+				puts "No sources found".yellow
+			end
+
 			Phoenx.add_groups_for_files(@project, sources)
 
 			sources.each do |source|
@@ -183,6 +191,10 @@ module Phoenx
 		def add_headers(header_files,attributes)
 		
 			headers = Phoenx.merge_files_array(header_files)
+
+			unless !header_files || header_files.empty? || !headers.empty?
+				puts "No #{attributes["ATTRIBUTES"].first} headers found".yellow
+			end
 
 			Phoenx.add_groups_for_files(@project, headers)
 
