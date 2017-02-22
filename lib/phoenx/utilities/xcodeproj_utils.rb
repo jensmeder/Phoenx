@@ -25,7 +25,7 @@ module Phoenx
 				
 			groups.each do |g|
 			
-				if Phoenx.is_bundle?(g)
+				if Phoenx.is_bundle?(g) || Phoenx.is_translation_folder?(g)
 						
 					break
 							
