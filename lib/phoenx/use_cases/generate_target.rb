@@ -137,6 +137,22 @@ module Phoenx
 					
 					end
 				
+				elsif source.include?('lproj')
+
+					parts = source.split("/")
+					lrpoj_index = parts.index { |part| part.include?('lproj') }
+					
+					parentPath = parts[0..lrpoj_index-1].join('/')
+					parentGoup = @project.main_group.find_subpath(parentPath)
+
+					variantGroup = parentGoup[File.basename(source)]
+					if variantGroup == nil
+						variantGroup = parentGoup.new_variant_group(File.basename(source))
+						self.target.resources_build_phase.add_file_reference(variantGroup)
+					end
+
+					variantGroup.new_file(parts[lrpoj_index..parts.count].join('/'))
+
 				else
 				
 					group = @project.main_group.find_subpath(File.dirname(source), false)
