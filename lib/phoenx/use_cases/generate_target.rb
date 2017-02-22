@@ -142,16 +142,16 @@ module Phoenx
 					parts = source.split("/")
 					translation_folder_index = parts.index { |part| Phoenx.is_translation_folder?(part) }
 					
-					parentPath = parts[0..translation_folder_index - 1].join('/')
-					parentGoup = @project.main_group.find_subpath(parentPath)
+					parent_path = parts[0..translation_folder_index - 1].join('/')
+					parent_group = @project.main_group.find_subpath(parent_path)
 
-					variantGroup = parentGoup[File.basename(source)]
-					if variantGroup == nil
-						variantGroup = parentGoup.new_variant_group(File.basename(source))
-						self.target.resources_build_phase.add_file_reference(variantGroup)
+					variant_group = parent_group[File.basename(source)]
+					if variant_group == nil
+						variant_group = parent_group.new_variant_group(File.basename(source))
+						self.target.resources_build_phase.add_file_reference(variant_group)
 					end
 
-					variantGroup.new_file(parts[translation_folder_index..parts.count].join('/'))
+					variant_group.new_file(parts[translation_folder_index..parts.count].join('/'))
 
 				else
 				
