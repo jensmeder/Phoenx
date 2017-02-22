@@ -8,6 +8,12 @@ module Phoenx
 		
 	end
 
+	def Phoenx.is_translation_folder?(file)
+		
+		return file.include?('lproj')
+		
+	end
+
 	def Phoenx.add_groups_for_files(project,files)
 	
 		files.each do |path|

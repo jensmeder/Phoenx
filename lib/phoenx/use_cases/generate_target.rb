@@ -137,12 +137,12 @@ module Phoenx
 					
 					end
 				
-				elsif source.include?('lproj')
+				elsif Phoenx.is_translation_folder?(source)
 
 					parts = source.split("/")
-					lrpoj_index = parts.index { |part| part.include?('lproj') }
+					translation_folder_index = parts.index { |part| Phoenx.is_translation_folder?(part) }
 					
-					parentPath = parts[0..lrpoj_index-1].join('/')
+					parentPath = parts[0..translation_folder_index - 1].join('/')
 					parentGoup = @project.main_group.find_subpath(parentPath)
 
 					variantGroup = parentGoup[File.basename(source)]
@@ -151,7 +151,7 @@ module Phoenx
 						self.target.resources_build_phase.add_file_reference(variantGroup)
 					end
 
-					variantGroup.new_file(parts[lrpoj_index..parts.count].join('/'))
+					variantGroup.new_file(parts[translation_folder_index..parts.count].join('/'))
 
 				else
 				
