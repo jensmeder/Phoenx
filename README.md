@@ -17,6 +17,10 @@ Phoenx::Project.new do |s|
 	s.config_files["Debug"] = "Configuration/Shared/debug.xcconfig"
 	s.config_files["Release"] = "Configuration/Shared/release.xcconfig"
 	
+	# When true, changes are avoided when regenerating the project file (useful when tracking it in version control)
+	# When you see a "Generated duplicate UUIDs" warning after enabling this option, please create a bug report at https://github.com/jensmeder/Phoenx/issues.
+	s.deterministic_project = true 
+
 	# Add a new OSX framework target
 	
 	s.target "OSX", :framework, :osx, '10.11' do |target|
