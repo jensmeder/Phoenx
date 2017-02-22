@@ -44,6 +44,8 @@ module Phoenx
 				key + ' = ' + (values.is_a?(String) ? values  : values.join(' '))
 			}
 
+			build_settings.sort!
+
 			open(to_folder + config.name + '.xcconfig', 'w') { |file|
 				build_settings.each { |setting| file.puts(setting) }
 			}
