@@ -4,14 +4,17 @@ module Phoenx
 	
 		attr_accessor :name
 		attr_accessor :resources
+		attr_accessor :excluded_resources
 		attr_accessor :frameworks
 		attr_accessor :libraries
 		attr_accessor :sources
+		attr_accessor :excluded_sources
 		attr_accessor :system_frameworks
 		attr_accessor :system_libraries
 		attr_accessor :pre_build_scripts
 		attr_accessor :post_build_scripts
 		attr_accessor :support_files
+		attr_accessor :excluded_support_files
 		attr_reader   :dependencies
 		
 		attr_reader :config_files
@@ -27,8 +30,11 @@ module Phoenx
 			@pre_build_scripts = []
 			@post_build_scripts = []
 			@resources = []
+			@excluded_resources = []
 			@sources = []
+			@excluded_sources = []
 			@support_files = []
+			@excluded_support_files = []
 		
 		end
 		
@@ -50,8 +56,11 @@ module Phoenx
 		attr_reader :target_type
 		attr_accessor :sub_projects
 		attr_accessor :private_headers
+		attr_accessor :excluded_private_headers
 		attr_accessor :project_headers
+		attr_accessor :excluded_project_headers
 		attr_accessor :public_headers
+		attr_accessor :excluded_public_headers
 	
 		public
 		
@@ -66,8 +75,11 @@ module Phoenx
 			@version = version
 			@sub_projects = []
 			@private_headers = []
+			@excluded_private_headers = []
 			@project_headers = []
+			@excluded_project_headers = []
 			@public_headers = []
+			@excluded_public_headers = []
 			
 			yield(self)
 		

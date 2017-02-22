@@ -9,6 +9,7 @@ module Phoenx
 		attr_accessor :post_install_scripts
 		attr_accessor :project_name
 		attr_accessor :support_files
+		attr_accessor :excluded_support_files
 		attr_reader   :targets
 
 		def initialize
@@ -19,6 +20,7 @@ module Phoenx
 			@pre_install_scripts = []
 			@post_install_scripts = []
 			@support_files = []
+			@excluded_support_files = []
 			
 			yield self
 	
