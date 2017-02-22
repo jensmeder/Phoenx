@@ -26,6 +26,7 @@ module Phoenx
 			
 			self.generate_configurations
 			self.add_config_files
+			self.add_support_files
 			self.build_targets
 			
 			@project.main_group.sort_recursively
@@ -102,6 +103,12 @@ module Phoenx
 				end
 			
 			end
+		
+		end
+
+		def add_support_files
+		
+			Phoenx.get_or_add_files(@project, @project_spec.support_files)
 		
 		end
 	
