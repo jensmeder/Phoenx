@@ -52,6 +52,8 @@ module Phoenx
 		attr_accessor :private_headers
 		attr_accessor :project_headers
 		attr_accessor :public_headers
+		attr_accessor :umbrella_header
+		attr_accessor :module_name
 	
 		public
 		
