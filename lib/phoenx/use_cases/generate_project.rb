@@ -30,6 +30,10 @@ module Phoenx
 			
 			@project.main_group.sort_recursively
 			
+			if @project_spec.deterministic_project
+				@project.predictabilize_uuids
+			end
+
 			@project.save(@project_spec.project_file_name)	
 			
 			@project_spec.post_install_scripts.each do |post_script|
