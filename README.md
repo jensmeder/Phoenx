@@ -17,6 +17,10 @@ Phoenx::Project.new do |s|
 	s.config_files["Debug"] = "Configuration/Shared/debug.xcconfig"
 	s.config_files["Release"] = "Configuration/Shared/release.xcconfig"
 	
+	# When true, changes are avoided when regenerating the project file (useful when tracking it in version control)
+	# When you see a "Generated duplicate UUIDs" warning after enabling this option, please create a bug report at https://github.com/jensmeder/Phoenx/issues.
+	s.deterministic_project = true 
+
 	# Add a new OSX framework target
 	
 	s.target "OSX", :framework, :osx, '10.11' do |target|
@@ -31,6 +35,14 @@ Phoenx::Project.new do |s|
 		target.public_headers = "Source/OSX/**/*.{h}","Source/USB/*.{h}","Source/PacketProtocol/**/*.{h}","Source/USB/Connections/**/*.{h}"
 		target.private_headers = ["Source/Sockets/**/*.{h}", "Source/USB/USBMux/**/*.{h}"]
 		
+		# Generate an umbrella header
+
+			# Path to the file that should be generated
+		target.umbrella_header = "Source/OSX/DarkLightning.h"
+			
+			# Optional: Defining the module name (results in `#import <Module/Header.h>` in comparison to `#import "Header.h"`)
+		target.module_name = "DarkLightning"
+
 		# Add a unit test target
 		
 		target.test_target "OSX-Tests" do |t|

@@ -11,6 +11,7 @@ module Phoenx
 		attr_accessor :support_files
 		attr_accessor :excluded_support_files
 		attr_reader   :targets
+		attr_accessor :deterministic_project
 
 		def initialize
 	
@@ -21,6 +22,7 @@ module Phoenx
 			@post_install_scripts = []
 			@support_files = []
 			@excluded_support_files = []
+			@deterministic_project = false
 			
 			yield self
 	

@@ -138,6 +138,22 @@ module Phoenx
 					
 					end
 				
+				elsif Phoenx.is_translation_folder?(source)
+
+					parts = source.split("/")
+					translation_folder_index = parts.index { |part| Phoenx.is_translation_folder?(part) }
+					
+					parent_path = parts[0..translation_folder_index - 1].join('/')
+					parent_group = @project.main_group.find_subpath(parent_path)
+
+					variant_group = parent_group[File.basename(source)]
+					if variant_group == nil
+						variant_group = parent_group.new_variant_group(File.basename(source))
+						self.target.resources_build_phase.add_file_reference(variant_group)
+					end
+
+					variant_group.new_file(parts[translation_folder_index..parts.count].join('/'))
+
 				else
 				
 					group = @project.main_group.find_subpath(File.dirname(source), false)
@@ -385,9 +401,7 @@ module Phoenx
 			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
 
 			self.add_sources
-			self.add_public_headers
-			self.add_private_headers
-			self.add_project_headers
+			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
 			self.add_resources
 			self.add_config_files
 			self.add_sub_projects

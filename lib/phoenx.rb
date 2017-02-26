@@ -18,6 +18,7 @@ require 'phoenx/entities/dependency'
 require 'phoenx/use_cases/generate_workspace'
 require 'phoenx/use_cases/generate_project'
 require 'phoenx/use_cases/generate_target'
+require 'phoenx/use_cases/target/add_header'
 require 'phoenx/use_cases/extract_build_settings'
 
 require 'phoenx/utilities/xcodeproj_utils'
