@@ -19,7 +19,8 @@ module Phoenx
 		
 		def add_support_files
 		
-			Phoenx.get_or_add_files(@project, @target_spec.support_files)
+			files = Phoenx.merge_files_array(@target_spec.support_files, @target_spec.excluded_support_files)
+			Phoenx.get_or_add_files(@project, files)
 		
 		end
 		
@@ -96,7 +97,7 @@ module Phoenx
 		def add_resources
 	
 			# Add Resource files
-			resources = Phoenx.merge_files_array(@target_spec.resources)
+			resources = Phoenx.merge_files_array(@target_spec.resources, @target_spec.excluded_resources)
 			
 			unless !@target_spec.resources || @target_spec.resources.empty? || !resources.empty?
 				puts "No resources found".yellow
@@ -180,7 +181,7 @@ module Phoenx
 		def add_sources
 	
 			# Add Source files
-			sources = Phoenx.merge_files_array(@target_spec.sources)
+			sources = Phoenx.merge_files_array(@target_spec.sources, @target_spec.excluded_sources)
 			
 			unless !@target_spec.sources || @target_spec.sources.empty? || !sources.empty?
 				puts "No sources found".yellow
@@ -204,7 +205,44 @@ module Phoenx
 	
 		end
 		
+		def add_headers(header_files, excluded_header_files, attributes)
+		
+			headers = Phoenx.merge_files_array(header_files, excluded_header_files)
 
+			unless !header_files || header_files.empty? || !headers.empty?
+				puts "No #{attributes["ATTRIBUTES"].first} headers found".yellow
+			end
+
+			Phoenx.add_groups_for_files(@project, headers)
+
+			headers.each do |header|
+			
+				file = Phoenx.get_or_add_file(@project,header)
+	
+				build_file = self.target.headers_build_phase.add_file_reference(file, true)
+				build_file.settings = attributes
+
+			end
+	
+		end
+		
+		def add_public_headers
+		
+			self.add_headers(@target_spec.public_headers, @target_spec.excluded_public_headers, ATTRIBUTES_PUBLIC_HEADERS)
+	
+		end
+		
+		def add_private_headers
+		
+			self.add_headers(@target_spec.private_headers, @target_spec.excluded_private_headers, ATTRIBUTES_PRIVATE_HEADERS)
+	
+		end
+		
+		def add_project_headers
+		
+			self.add_headers(@target_spec.project_headers, @target_spec.excluded_project_headers, ATTRIBUTES_PROJECT_HEADERS)
+	
+		end
 		
 		def add_config_files
 		

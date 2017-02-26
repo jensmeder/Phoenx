@@ -112,7 +112,8 @@ module Phoenx
 
 		def add_support_files
 		
-			Phoenx.get_or_add_files(@project, @project_spec.support_files)
+			files = Phoenx.merge_files_array(@project_spec.support_files, @project_spec.excluded_support_files)
+			Phoenx.get_or_add_files(@project, files)
 		
 		end
 	
