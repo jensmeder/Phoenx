@@ -8,6 +8,7 @@ module Phoenx
 		attr_accessor :pre_install_scripts
 		attr_accessor :post_install_scripts
 		attr_accessor :project_name
+		attr_accessor :support_files
 		attr_reader   :targets
 		attr_accessor :deterministic_project
 
@@ -18,6 +19,7 @@ module Phoenx
 			@targets = []
 			@pre_install_scripts = []
 			@post_install_scripts = []
+			@support_files = []
 			@deterministic_project = false
 			
 			yield self
