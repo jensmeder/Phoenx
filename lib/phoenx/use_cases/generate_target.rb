@@ -137,6 +137,22 @@ module Phoenx
 					
 					end
 				
+				elsif Phoenx.is_translation_folder?(source)
+
+					parts = source.split("/")
+					translation_folder_index = parts.index { |part| Phoenx.is_translation_folder?(part) }
+					
+					parent_path = parts[0..translation_folder_index - 1].join('/')
+					parent_group = @project.main_group.find_subpath(parent_path)
+
+					variant_group = parent_group[File.basename(source)]
+					if variant_group == nil
+						variant_group = parent_group.new_variant_group(File.basename(source))
+						self.target.resources_build_phase.add_file_reference(variant_group)
+					end
+
+					variant_group.new_file(parts[translation_folder_index..parts.count].join('/'))
+
 				else
 				
 					group = @project.main_group.find_subpath(File.dirname(source), false)
@@ -188,44 +204,7 @@ module Phoenx
 	
 		end
 		
-		def add_headers(header_files,attributes)
-		
-			headers = Phoenx.merge_files_array(header_files)
 
-			unless !header_files || header_files.empty? || !headers.empty?
-				puts "No #{attributes["ATTRIBUTES"].first} headers found".yellow
-			end
-
-			Phoenx.add_groups_for_files(@project, headers)
-
-			headers.each do |header|
-			
-				file = Phoenx.get_or_add_file(@project,header)
-	
-				build_file = self.target.headers_build_phase.add_file_reference(file, true)
-				build_file.settings = attributes
-
-			end
-	
-		end
-		
-		def add_public_headers
-		
-			self.add_headers(@target_spec.public_headers,ATTRIBUTES_PUBLIC_HEADERS)
-	
-		end
-		
-		def add_private_headers
-		
-			self.add_headers(@target_spec.private_headers,ATTRIBUTES_PRIVATE_HEADERS)
-	
-		end
-		
-		def add_project_headers
-		
-			self.add_headers(@target_spec.project_headers,ATTRIBUTES_PROJECT_HEADERS)
-	
-		end
 		
 		def add_config_files
 		
@@ -384,9 +363,7 @@ module Phoenx
 			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
 
 			self.add_sources
-			self.add_public_headers
-			self.add_private_headers
-			self.add_project_headers
+			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
 			self.add_resources
 			self.add_config_files
 			self.add_sub_projects

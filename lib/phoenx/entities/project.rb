@@ -10,6 +10,7 @@ module Phoenx
 		attr_accessor :project_name
 		attr_accessor :support_files
 		attr_reader   :targets
+		attr_accessor :deterministic_project
 
 		def initialize
 	
@@ -19,6 +20,7 @@ module Phoenx
 			@pre_install_scripts = []
 			@post_install_scripts = []
 			@support_files = []
+			@deterministic_project = false
 			
 			yield self
 	
