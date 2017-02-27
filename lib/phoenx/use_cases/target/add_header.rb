@@ -62,7 +62,7 @@ module Phoenx
 							import = '"'  + File.basename(header) + '"'
 						end
 						'#import ' + import
-					}
+					}.sort
 
 					open(@target_spec.umbrella_header, "w") { |file| 
 						entries.each { |header| file.puts header }
