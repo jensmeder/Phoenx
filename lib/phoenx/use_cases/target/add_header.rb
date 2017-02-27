@@ -89,10 +89,12 @@ module Phoenx
 					build_file = @target.headers_build_phase.add_file_reference(file, true)
 					build_file.settings = attributes
 
-					if add_to_umbrella_header
-						@umbrella_headers << header
-					end
+				end
 
+				if add_to_umbrella_header
+					@umbrella_headers += headers
+				else 
+					@umbrella_headers -= headers
 				end
 		
 			end
