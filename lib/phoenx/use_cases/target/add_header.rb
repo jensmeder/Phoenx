@@ -62,11 +62,13 @@ module Phoenx
 							import = '"'  + File.basename(header) + '"'
 						end
 						'#import ' + import
-					}
+					}.sort
 
 					open(@target_spec.umbrella_header, "w") { |file| 
 						entries.each { |header| file.puts header }
 					}
+
+					self.add_header(@target_spec.umbrella_header, ATTRIBUTES_PUBLIC_HEADERS)
 
 				end
 				
@@ -84,17 +86,23 @@ module Phoenx
 
 				headers.each do |header|
 				
-					file = Phoenx.get_or_add_file(@project,header)
-		
-					build_file = @target.headers_build_phase.add_file_reference(file, true)
-					build_file.settings = attributes
-
-					if add_to_umbrella_header
-						@umbrella_headers << header
-					end
+					self.add_header(header, attributes)
 
 				end
+
+				if add_to_umbrella_header
+					@umbrella_headers += headers
+				else 
+					@umbrella_headers -= headers
+				end
 		
+			end
+
+			def add_header(header, attributes)
+				file = Phoenx.get_or_add_file(@project, header)
+		
+				build_file = @target.headers_build_phase.add_file_reference(file, true)
+				build_file.settings = attributes
 			end
 
 		end
