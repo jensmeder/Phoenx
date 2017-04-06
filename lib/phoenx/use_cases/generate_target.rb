@@ -585,6 +585,7 @@ module Phoenx
 			
 			# Add target dependency.
 			@target.add_dependency(@main_target)
+			@target.frameworks_build_phase.add_file_reference(@main_target.product_reference)
 			self.configure_target
 	
 		end
