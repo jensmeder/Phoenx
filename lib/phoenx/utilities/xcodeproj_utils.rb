@@ -4,7 +4,7 @@ module Phoenx
 
 	def Phoenx.is_bundle?(file)
 		
-		return file.include?('xcassets') || file.include?('bundle')
+		return file.include?('xcassets') || file.include?('bundle') || file.include?('playground')
 		
 	end
 
