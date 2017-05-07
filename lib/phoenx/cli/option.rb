@@ -12,19 +12,15 @@ module Phoenx
 			@block
 		
 			def initialize(name, short_cut, description, has_argument, &block)
-		
 				@name = name
 				@short_cut = short_cut
 				@description = description
 				@has_argument = has_argument
-				@block = block
-			
+				@block = block	
 			end
 		
 			def execute
-		
 				@block.call
-		
 			end
 	
 		end
