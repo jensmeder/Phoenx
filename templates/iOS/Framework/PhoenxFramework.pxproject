@@ -1,0 +1,16 @@
+Phoenx::Project.new do |s|
+		
+	s.project_name = "PhoenxFramework"
+	s.config_files["Debug"] = "Support/Project/Debug.xcconfig"
+	s.config_files["Release"] = "Support/Project/Release.xcconfig"
+	
+	s.target "PhoenxFramework", :framework, :ios, '9.0' do |target|
+	
+		target.config_files["Debug"] = "Support/PhoenxFramework/Debug.xcconfig"
+		target.config_files["Release"] = "Support/PhoenxFramework/Release.xcconfig"
+		target.support_files = ["Support/**/*.{xcconfig,plist}"]
+		target.sources = ["Sources/**/*.{swift}"]
+	
+	end
+
+end
