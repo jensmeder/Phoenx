@@ -67,9 +67,9 @@ As soon as you run `phoenx project build` Phoenx will generate a new `xcodeproj`
 1. [Features](README.md#1-features)
 2. [Requirements](README.md#2-requirements)
 3. [Installation](README.md#3-installation)
-4. [Documentation](README.md#4-documentation)
-5. [Available Commands](README.md#5-available-commands)
-6. [Credits](README.md#6-credits)
+4. [Getting Started](README.md#4-getting-started)
+5. [Documentation](README.md#5-documentation)
+6. [Available Commands](README.md#6-available-commands)
 7. [License](README.md#7-license)
 
 ## 1. Features
@@ -90,12 +90,15 @@ Phoenx is built with Ruby and can be installed via ruby gems. If you use the def
 ```ruby
 $ gem install phoenx
 ```
+## 4. Getting Started
 
-## 4. Documentation
+You can find project templates for common Xcodeproj configurations in the `templates` folder. 
+
+## 5. Documentation
 
 You can find more details on how to use phoenx in the [Wiki](https://github.com/jensmeder/Phoenx/wiki).
 
-## 5. Available Commands
+## 6. Available Commands
 
 ```
 $ phoenx [command] [options]
@@ -137,8 +140,6 @@ $ phoenx project [command] [options]
 *Options*
 
      --help, -h          Shows this help
-
-## 6. Credits
 
 ## 7. License
 
