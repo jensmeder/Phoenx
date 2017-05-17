@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  asdasd
+//  PhoenxApp
 //
 //  Created by Jens Meder on 17.05.17.
 //  Copyright © 2017 Jens Meder. All rights reserved.
