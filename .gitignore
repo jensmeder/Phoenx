@@ -1,6 +1,6 @@
 # Created by https://www.gitignore.io/api/ruby
 
-.xcodeproj
+*.xcodeproj
 
 ### Ruby ###
 *.gem
