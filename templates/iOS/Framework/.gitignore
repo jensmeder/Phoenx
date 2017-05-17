@@ -1,6 +1,6 @@
 # OS X
 .DS_Store
-.xcodeproj
+*.xcodeproj
 
 # Xcode
 Carthage
