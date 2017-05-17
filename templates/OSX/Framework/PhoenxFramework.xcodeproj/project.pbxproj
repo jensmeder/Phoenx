@@ -1,0 +1,207 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B01AF69EC56D27F6B849A15B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D363E80EBEC307D528BDA59 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		22BDDC54B57CA9C8A8B3EA44 /* Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		4D363E80EBEC307D528BDA59 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		6AAD7CD81AD03C4184091D6B /* Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		75F0E119F29CC7931B9910BB /* Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		7CB13197244EB5F1AB1CF025 /* Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		A3604A35C2A77DC079FF8EF7 /* PhoenxFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PhoenxFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8EBFDCDF7BCD2D9B02438CD /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DADDBCCE914E35B97334EC8A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B01AF69EC56D27F6B849A15B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		14E8AC83B624B09185C82D90 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				D8EBFDCDF7BCD2D9B02438CD /* Info.plist */,
+				D386D4779358FCCF2A564281 /* PhoenxFramework */,
+				5C6BE872E27416CD83CD4087 /* Project */,
+			);
+			name = Support;
+			path = Support;
+			sourceTree = "<group>";
+		};
+		433C6F3E89366C8E8D5C280D /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				4D363E80EBEC307D528BDA59 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		5C6BE872E27416CD83CD4087 /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				22BDDC54B57CA9C8A8B3EA44 /* Debug.xcconfig */,
+				7CB13197244EB5F1AB1CF025 /* Release.xcconfig */,
+			);
+			name = Project;
+			path = Project;
+			sourceTree = "<group>";
+		};
+		67BDA76BBE9E85A286DDD257 = {
+			isa = PBXGroup;
+			children = (
+				D97126F8B9C4793DDA617996 /* Frameworks */,
+				8C8352B89F468A57483B8519 /* Products */,
+				14E8AC83B624B09185C82D90 /* Support */,
+			);
+			sourceTree = "<group>";
+		};
+		8C8352B89F468A57483B8519 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3604A35C2A77DC079FF8EF7 /* PhoenxFramework.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D386D4779358FCCF2A564281 /* PhoenxFramework */ = {
+			isa = PBXGroup;
+			children = (
+				6AAD7CD81AD03C4184091D6B /* Debug.xcconfig */,
+				75F0E119F29CC7931B9910BB /* Release.xcconfig */,
+			);
+			name = PhoenxFramework;
+			path = PhoenxFramework;
+			sourceTree = "<group>";
+		};
+		D97126F8B9C4793DDA617996 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				433C6F3E89366C8E8D5C280D /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C2B3A128A728237A7026993C /* PhoenxFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2AD0876023D4D0F5ED05A3FA /* Build configuration list for PBXNativeTarget "PhoenxFramework" */;
+			buildPhases = (
+				9927D79D03A230EDC11ED53B /* Sources */,
+				DADDBCCE914E35B97334EC8A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhoenxFramework;
+			productName = PhoenxFramework;
+			productReference = A3604A35C2A77DC079FF8EF7 /* PhoenxFramework.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4FF55B867042BBEF51501B53 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 277228E88554E6478C537EF4 /* Build configuration list for PBXProject "PhoenxFramework" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 67BDA76BBE9E85A286DDD257;
+			productRefGroup = 8C8352B89F468A57483B8519 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C2B3A128A728237A7026993C /* PhoenxFramework */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9927D79D03A230EDC11ED53B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8408ECD18AECED4160FD0C92 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6AAD7CD81AD03C4184091D6B /* Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		BA3FCC6F42A585C755F7B50D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22BDDC54B57CA9C8A8B3EA44 /* Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		D51ACA6F0BF41E4507E008E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CB13197244EB5F1AB1CF025 /* Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		DAE66EA0950EB130830F8D74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75F0E119F29CC7931B9910BB /* Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		277228E88554E6478C537EF4 /* Build configuration list for PBXProject "PhoenxFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BA3FCC6F42A585C755F7B50D /* Debug */,
+				D51ACA6F0BF41E4507E008E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2AD0876023D4D0F5ED05A3FA /* Build configuration list for PBXNativeTarget "PhoenxFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAE66EA0950EB130830F8D74 /* Release */,
+				8408ECD18AECED4160FD0C92 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4FF55B867042BBEF51501B53 /* Project object */;
+}
