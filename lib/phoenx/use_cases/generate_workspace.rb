@@ -38,7 +38,7 @@ module Phoenx
 		end
 		
 		def generate_projects
-			@workspace.projects.each do |key,value| 
+			@workspace.generated_projects.each do |key,value| 
 				self.generate_project(key,value)
 			end
 			self.generate_project(@workspace.main_project_name,@workspace.main_project_path)
