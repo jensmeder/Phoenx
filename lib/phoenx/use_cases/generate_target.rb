@@ -330,6 +330,41 @@ module Phoenx
 		end
 	
 	end
+
+	class Watch2TargetBuilder < TestableTargetBuilder
+		:target
+		:extension_products
+	
+		def add_extension_targets
+			@extension_products = []
+			@target_spec.extensions.each do |extension_target_spec|
+				extension_target_spec.target_type = :watch2_extension
+				extension_target_spec.platform = self.target_spec.platform
+				extension_target_spec.version = self.target_spec.version
+				builder = ApplicationTargetBuilder.new @project, extension_target_spec, @project_spec
+				builder.build
+				@target.add_dependency(builder.target)
+				@extension_products << extension_target_spec.name + '.appex'
+			end	
+		end
+
+		def build
+			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
+			self.add_extension_targets
+			embed_extension = @target.new_copy_files_build_phase "Embed App Extensions"
+			embed_extension.symbol_dst_subfolder_spec = :plug_ins
+			super()
+			@extension_products.each do |product|
+				file = @project.products_group.find_file_by_path(product)
+				embed_extension.add_file_reference(file)
+			end
+		end
+		
+		def target
+			return @target
+		end
+	
+	end
 	
 	class TestTargetBuilder < TargetBuilder
 		:target

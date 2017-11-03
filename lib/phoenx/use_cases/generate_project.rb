@@ -39,6 +39,9 @@ module Phoenx
 				elsif target.target_type == :framework
 					builder = FrameworkTargetBuilder.new @project, target, @project_spec
 					builder.build
+				elsif target.target_type == :watch2_app
+					builder = Watch2TargetBuilder.new @project, target, @project_spec
+					builder.build
 				end
 			end
 		end
