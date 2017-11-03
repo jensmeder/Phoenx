@@ -21,6 +21,7 @@ module Phoenx
 		end
 		
 		def add_frameworks_and_libraries
+			self.target.frameworks_build_phases.clear
 			# Add Framework dependencies
 			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT, true)
 			Phoenx.add_groups_for_files(@project,@target_spec.frameworks)
