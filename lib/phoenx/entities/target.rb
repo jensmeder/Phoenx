@@ -42,10 +42,11 @@ module Phoenx
 	
 	class TestableTarget < AbstractTarget
 		attr_reader :test_targets
+		attr_reader :extensions
 		attr_reader :schemes
 		attr_accessor :version
 		attr_accessor :platform
-		attr_reader :target_type
+		attr_accessor :target_type
 		attr_accessor :sub_projects
 		attr_accessor :private_headers
 		attr_accessor :excluded_private_headers
@@ -61,6 +62,7 @@ module Phoenx
 		def initialize(name, type, platform, version)
 			super()
 			@test_targets = []
+			@extensions = []
 			@schemes = []
 			@name = name
 			@target_type = type
@@ -82,6 +84,11 @@ module Phoenx
 			@test_targets << target
 		end
 		
+		def extension(name, &block)
+			target = Phoenx::TestableTarget.new name, nil, nil, nil, &block
+			@extensions << target
+		end
+
 		def scheme(name, &block)
 			@schemes << Phoenx::Scheme.new(name, block)
 		end
