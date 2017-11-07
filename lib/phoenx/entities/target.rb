@@ -56,6 +56,10 @@ module Phoenx
 		attr_accessor :excluded_public_headers
 		attr_accessor :umbrella_header
 		attr_accessor :module_name
+		attr_accessor :archive_configuration
+		attr_accessor :launch_configuration
+		attr_accessor :analyze_configuration
+		attr_accessor :profile_configuration
 	
 		public
 		
@@ -75,6 +79,10 @@ module Phoenx
 			@excluded_project_headers = []
 			@public_headers = []
 			@excluded_public_headers = []
+			@archive_configuration = 'Debug'
+			@launch_configuration = 'Debug'
+			@analyze_configuration = 'Debug'
+			@profile_configuration = 'Debug'
 			yield(self)
 		end
 		

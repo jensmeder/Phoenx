@@ -181,17 +181,39 @@ module Phoenx
 	
 	end
 
+	class SaveableScheme < Xcodeproj::XCScheme
+
+		attr_accessor :project_file_name
+		attr_accessor :name
+		attr_accessor :shared
+
+		def initialize(project_file_name, name, shared)
+			super()
+			@project_file_name = project_file_name
+			@name = name
+			@shared = shared
+		end
+
+		def save!
+			save_as @project_file_name, @name, @shared
+		end
+
+	end
+
 	class TestableTargetBuilder < TargetBuilder
 	
 		:test_target
+		:schemes
 		
 		def generate_target_scheme
 			# Generate main scheme
-			scheme = Xcodeproj::XCScheme.new
+			scheme = SaveableScheme.new @project_spec.project_file_name, @target_spec.name, false
 			scheme.configure_with_targets(self.target, @test_target)
-			scheme.test_action.code_coverage_enabled = true
-			scheme.add_build_target(self.target, true)
-			scheme.save_as(@project_spec.project_file_name, @target_spec.name, false)	
+			scheme.test_action.code_coverage_enabled = true # TODO
+			self.configure_scheme(scheme, @target_spec)
+			
+			@schemes << scheme
+			scheme.save!
 		end
 		
 		def sort_build_phases
@@ -222,23 +244,37 @@ module Phoenx
 		
 		def add_schemes
 			@target_spec.schemes.each do |s|
-				scheme = Xcodeproj::XCScheme.new
+				scheme = SaveableScheme.new @project_spec.project_file_name, s.name, false
 				scheme.configure_with_targets(self.target, @test_target)
-				scheme.test_action.code_coverage_enabled = true
-				scheme.add_build_target(self.target, true)
-				scheme.add_test_target(@test_target)
-				archive_configuration = self.target.build_configuration_list[s.archive_configuration]
-				unless archive_configuration
-					abort "Invalid archive configuration assigned for scheme '#{s.name}' ".red + s.archive_configuration.bold
-				end
-				launch_configuration = self.target.build_configuration_list[s.launch_configuration]
-				unless launch_configuration
-					abort "Invalid launch configuration assigned for scheme '#{s.name}' ".red + s.launch_configuration.bold
-				end
-				scheme.archive_action.build_configuration = archive_configuration
-				scheme.launch_action.build_configuration = launch_configuration
-				scheme.save_as(@project_spec.project_file_name, s.name, false)
+				scheme.test_action.code_coverage_enabled = true # TODO
+				self.configure_scheme(scheme, s)
+
+				@schemes << scheme
+				scheme.save!
 			end
+		end
+
+		def configure_scheme(scheme, spec)
+			archive_configuration = self.target.build_configuration_list[spec.archive_configuration]
+			unless archive_configuration
+				abort "Invalid archive configuration assigned for scheme '#{spec.name}' ".red + s.archive_configuration.bold
+			end
+			launch_configuration = self.target.build_configuration_list[spec.launch_configuration]
+			unless launch_configuration
+				abort "Invalid launch configuration assigned for scheme '#{spec.name}' ".red + spec.launch_configuration.bold
+			end
+			analyze_configuration = self.target.build_configuration_list[spec.analyze_configuration]
+			unless analyze_configuration
+				abort "Invalid analyze configuration assigned for scheme '#{spec.name}' ".red + spec.analyze_configuration.bold
+			end
+			profile_configuration = self.target.build_configuration_list[spec.profile_configuration]
+			unless analyze_configuration
+				abort "Invalid profile configuration assigned for scheme '#{spec.name}' ".red + spec.profile_configuration.bold
+			end
+			scheme.archive_action.build_configuration = archive_configuration
+			scheme.launch_action.build_configuration = launch_configuration
+			scheme.analyze_action.build_configuration = analyze_configuration
+			scheme.profile_action.build_configuration = profile_configuration
 		end
 		
 		def add_test_targets
@@ -250,6 +286,7 @@ module Phoenx
 		end
 		
 		def build
+			@schemes = []
 			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
 			self.add_sources
 			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
