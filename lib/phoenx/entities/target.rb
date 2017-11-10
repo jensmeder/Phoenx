@@ -60,6 +60,7 @@ module Phoenx
 		attr_accessor :launch_configuration
 		attr_accessor :analyze_configuration
 		attr_accessor :profile_configuration
+		attr_accessor :code_coverage_enabled
 	
 		public
 		
@@ -83,6 +84,7 @@ module Phoenx
 			@launch_configuration = 'Debug'
 			@analyze_configuration = 'Debug'
 			@profile_configuration = 'Debug'
+			@code_coverage_enabled = false
 			yield(self)
 		end
 		

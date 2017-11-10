@@ -209,7 +209,7 @@ module Phoenx
 			# Generate main scheme
 			scheme = SaveableScheme.new @project_spec.project_file_name, @target_spec.name, false
 			scheme.configure_with_targets(self.target, @test_target)
-			scheme.test_action.code_coverage_enabled = true # TODO
+			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 			self.configure_scheme(scheme, @target_spec)
 			
 			@schemes << scheme
@@ -246,7 +246,7 @@ module Phoenx
 			@target_spec.schemes.each do |s|
 				scheme = SaveableScheme.new @project_spec.project_file_name, s.name, false
 				scheme.configure_with_targets(self.target, @test_target)
-				scheme.test_action.code_coverage_enabled = true # TODO
+				scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 				self.configure_scheme(scheme, s)
 
 				@schemes << scheme
