@@ -19,9 +19,12 @@ module Phoenx
 			files = Phoenx.merge_files_array(@target_spec.support_files, @target_spec.excluded_support_files)
 			Phoenx.get_or_add_files(@project, files)
 		end
+
+		def clean_target
+			self.target.frameworks_build_phases.clear
+		end
 		
 		def add_frameworks_and_libraries
-			self.target.frameworks_build_phases.clear
 			# Add Framework dependencies
 			frameworks_group = @project.main_group.find_subpath(FRAMEWORKS_ROOT, true)
 			Phoenx.add_groups_for_files(@project,@target_spec.frameworks)
@@ -270,6 +273,7 @@ module Phoenx
 		def build
 			@schemes = []
 			puts ">> Target ".green + @target_spec.name.bold
+			self.clean_target
 			self.add_sources
 			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
 			self.add_resources
@@ -511,6 +515,7 @@ module Phoenx
 			@target.build_phases << @project.new(Xcodeproj::Project::PBXSourcesBuildPhase)
 			@target.build_phases << @project.new(Xcodeproj::Project::PBXFrameworksBuildPhase)
 			@target.build_phases << @project.new(Xcodeproj::Project::PBXResourcesBuildPhase)
+			self.clean_target
 			self.add_sources
 			self.add_config_files
 			self.add_frameworks_and_libraries
