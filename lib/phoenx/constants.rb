@@ -12,6 +12,8 @@ module Phoenx
 	FRAMEWORKS_ROOT 	= "Frameworks"
 	CONFIGURATION_ROOT 	= "Configuration"
 	XCTEST_EXTENSION 	= "xctest"
+	APP_EXTENSION 		= "app"
+	EXTENSION_EXTENSION = "appex"
 	
 	ATTRIBUTES_CODE_SIGN_ON_COPY 	= {"ATTRIBUTES" => ["CodeSignOnCopy"]}
 	ATTRIBUTES_PUBLIC_HEADERS 		= {"ATTRIBUTES" => [:Public]}

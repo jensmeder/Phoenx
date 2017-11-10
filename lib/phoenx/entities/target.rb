@@ -43,6 +43,7 @@ module Phoenx
 	class TestableTarget < AbstractTarget
 		attr_reader :test_targets
 		attr_reader :extensions
+		attr_reader :watch_apps
 		attr_reader :schemes
 		attr_accessor :version
 		attr_accessor :platform
@@ -68,6 +69,7 @@ module Phoenx
 			super()
 			@test_targets = []
 			@extensions = []
+			@watch_apps = []
 			@schemes = []
 			@name = name
 			@target_type = type
@@ -94,9 +96,14 @@ module Phoenx
 			@test_targets << target
 		end
 		
-		def extension(name, &block)
+		def extension_target(name, &block)
 			target = Phoenx::TestableTarget.new name, nil, nil, nil, &block
 			@extensions << target
+		end
+
+		def watch_target(name, type, platform, version, &block)
+			target = Phoenx::TestableTarget.new name, type, platform, version, &block
+			@watch_apps << target
 		end
 
 		def scheme(name, &block)

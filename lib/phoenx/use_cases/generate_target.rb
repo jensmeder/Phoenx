@@ -181,25 +181,6 @@ module Phoenx
 	
 	end
 
-	class SaveableScheme < Xcodeproj::XCScheme
-
-		attr_accessor :project_file_name
-		attr_accessor :name
-		attr_accessor :shared
-
-		def initialize(project_file_name, name, shared)
-			super()
-			@project_file_name = project_file_name
-			@name = name
-			@shared = shared
-		end
-
-		def save!
-			save_as @project_file_name, @name, @shared
-		end
-
-	end
-
 	class TestableTargetBuilder < TargetBuilder
 	
 		:test_target
@@ -207,13 +188,13 @@ module Phoenx
 		
 		def generate_target_scheme
 			# Generate main scheme
-			scheme = SaveableScheme.new @project_spec.project_file_name, @target_spec.name, false
+			scheme = Xcodeproj::XCScheme.new
 			scheme.configure_with_targets(self.target, @test_target)
 			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 			self.configure_scheme(scheme, @target_spec)
 			
 			@schemes << scheme
-			scheme.save!
+			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
 		end
 		
 		def sort_build_phases
@@ -244,13 +225,13 @@ module Phoenx
 		
 		def add_schemes
 			@target_spec.schemes.each do |s|
-				scheme = SaveableScheme.new @project_spec.project_file_name, s.name, false
+				scheme = Xcodeproj::XCScheme.new 
 				scheme.configure_with_targets(self.target, @test_target)
 				scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 				self.configure_scheme(scheme, s)
 
 				@schemes << scheme
-				scheme.save!
+				scheme.save_as @project_spec.project_file_name, s.name, false
 			end
 		end
 
@@ -287,7 +268,7 @@ module Phoenx
 		
 		def build
 			@schemes = []
-			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
+			puts ">> Target ".green + @target_spec.name.bold
 			self.add_sources
 			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
 			self.add_resources
@@ -337,12 +318,35 @@ module Phoenx
 				end
 			end
 		end
-	
+
+		def add_watch_targets
+			return if @target_spec.watch_apps.empty?
+
+			embed_watch_app_build_phase = @target.new_copy_files_build_phase "Embed Watch Content"
+			embed_watch_app_build_phase.symbol_dst_subfolder_spec = :products_directory
+			embed_watch_app_build_phase.dst_path = "$(CONTENTS_FOLDER_PATH)/Watch"
+
+			@target_spec.watch_apps.each do |watch_app_spec|
+				builder = WatchTargetBuilder.new @project, watch_app_spec, @project_spec
+				builder.build
+				@target.add_dependency(builder.target)
+
+				file = @project.products_group.find_file_by_path(watch_app_spec.name + '.' + APP_EXTENSION)
+				embed_watch_app_build_phase.add_file_reference(file)
+
+				builder.schemes.each do |scheme|
+					scheme.add_build_target(@target, true)
+					scheme.save!
+				end
+			end	
+		end
+
 		def build
 			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
 			@copy_frameworks = @target.new_copy_files_build_phase "Embed Frameworks"
 			@copy_frameworks.symbol_dst_subfolder_spec = :frameworks
 			super()
+			self.add_watch_targets
 			self.framework_files.each do |file|
 				build_file = @copy_frameworks.add_file_reference(file)
 				build_file.settings = ATTRIBUTES_CODE_SIGN_ON_COPY
@@ -369,33 +373,54 @@ module Phoenx
 	
 	end
 
-	class Watch2TargetBuilder < TestableTargetBuilder
+	class WatchTargetBuilder < TestableTargetBuilder
 		:target
-		:extension_products
+
+		def schemes
+			return @schemes
+		end
+
+		def validate
+			unless @target_spec.target_type == :watch_app or @target_spec.target_type == :watch2_app
+				abort "Watch target '#{@target_spec.name}' has to be of type :watch_app or :watch2_app".red
+			end
+		end
 	
+		def generate_target_scheme
+			# Generate main scheme
+			scheme = Xcodeproj::XCScheme.new 
+			scheme.build_action.add_entry Xcodeproj::XCScheme::BuildAction::Entry.new(@target)
+			scheme.launch_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
+      		scheme.profile_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
+
+			self.configure_scheme(scheme, @target_spec)
+			
+			@schemes << scheme
+			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
+		end
+
 		def add_extension_targets
-			@extension_products = []
+			embed_extension_build_phase = @target.new_copy_files_build_phase "Embed App Extensions"
+			embed_extension_build_phase.symbol_dst_subfolder_spec = :plug_ins
+
 			@target_spec.extensions.each do |extension_target_spec|
-				extension_target_spec.target_type = :watch2_extension
+				extension_target_spec.target_type = @target_spec.target_type == :watch2_app ? :watch2_extension : :watch_extension
 				extension_target_spec.platform = self.target_spec.platform
 				extension_target_spec.version = self.target_spec.version
 				builder = ApplicationTargetBuilder.new @project, extension_target_spec, @project_spec
 				builder.build
 				@target.add_dependency(builder.target)
-				@extension_products << extension_target_spec.name + '.appex'
+
+				file = @project.products_group.find_file_by_path(extension_target_spec.name + '.' + EXTENSION_EXTENSION)
+				embed_extension_build_phase.add_file_reference(file)
 			end	
 		end
 
 		def build
+			self.validate
 			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
-			self.add_extension_targets
-			embed_extension = @target.new_copy_files_build_phase "Embed App Extensions"
-			embed_extension.symbol_dst_subfolder_spec = :plug_ins
+			self.add_extension_targets	
 			super()
-			@extension_products.each do |product|
-				file = @project.products_group.find_file_by_path(product)
-				embed_extension.add_file_reference(file)
-			end
 		end
 		
 		def target
