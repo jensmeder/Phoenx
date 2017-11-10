@@ -195,6 +195,7 @@ module Phoenx
 			
 			@schemes << scheme
 			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
+			return scheme
 		end
 		
 		def sort_build_phases
@@ -341,12 +342,37 @@ module Phoenx
 			end	
 		end
 
+		def add_extension_targets
+			return if @target_spec.extensions.empty?
+
+			embed_extension_build_phase = @target.new_copy_files_build_phase "Embed App Extensions"
+			embed_extension_build_phase.symbol_dst_subfolder_spec = :plug_ins
+
+			@target_spec.extensions.each do |extension_target_spec|
+				extension_target_spec.target_type = :app_extension
+				extension_target_spec.platform = self.target_spec.platform
+				extension_target_spec.version = self.target_spec.version
+				builder = ExtensionTargetBuilder.new @project, extension_target_spec, @project_spec
+				builder.build
+				@target.add_dependency(builder.target)
+
+				file = @project.products_group.find_file_by_path(extension_target_spec.name + '.' + EXTENSION_EXTENSION)
+				embed_extension_build_phase.add_file_reference(file)
+
+				builder.schemes.each do |scheme|
+					scheme.add_build_target(@target, true)
+					scheme.save!
+				end
+			end	
+		end
+
 		def build
 			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
 			@copy_frameworks = @target.new_copy_files_build_phase "Embed Frameworks"
 			@copy_frameworks.symbol_dst_subfolder_spec = :frameworks
 			super()
 			self.add_watch_targets
+			self.add_extension_targets
 			self.framework_files.each do |file|
 				build_file = @copy_frameworks.add_file_reference(file)
 				build_file.settings = ATTRIBUTES_CODE_SIGN_ON_COPY
@@ -357,6 +383,10 @@ module Phoenx
 			return @target
 		end
 	
+		def schemes
+			return @schemes
+		end
+
 	end
 	
 	class FrameworkTargetBuilder < TestableTargetBuilder
@@ -376,10 +406,6 @@ module Phoenx
 	class WatchTargetBuilder < TestableTargetBuilder
 		:target
 
-		def schemes
-			return @schemes
-		end
-
 		def validate
 			unless @target_spec.target_type == :watch_app or @target_spec.target_type == :watch2_app
 				abort "Watch target '#{@target_spec.name}' has to be of type :watch_app or :watch2_app".red
@@ -397,6 +423,7 @@ module Phoenx
 			
 			@schemes << scheme
 			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
+			return scheme
 		end
 
 		def add_extension_targets
@@ -407,7 +434,7 @@ module Phoenx
 				extension_target_spec.target_type = @target_spec.target_type == :watch2_app ? :watch2_extension : :watch_extension
 				extension_target_spec.platform = self.target_spec.platform
 				extension_target_spec.version = self.target_spec.version
-				builder = ApplicationTargetBuilder.new @project, extension_target_spec, @project_spec
+				builder = ExtensionTargetBuilder.new @project, extension_target_spec, @project_spec
 				builder.build
 				@target.add_dependency(builder.target)
 
@@ -426,9 +453,37 @@ module Phoenx
 		def target
 			return @target
 		end
+
+		def schemes
+			return @schemes
+		end
 	
 	end
+
+	class ExtensionTargetBuilder < ApplicationTargetBuilder
+		:target
+
+		def generate_target_scheme
+			scheme = super
+			scheme.launch_action.launch_automatically_substyle = "2"
+			scheme.save!
+			return scheme
+		end
+
+		def build
+			super
+		end
+		
+		def target
+			return @target
+		end
 	
+		def schemes
+			return @schemes
+		end
+
+	end
+
 	class TestTargetBuilder < TargetBuilder
 		:target
 		:main_target
