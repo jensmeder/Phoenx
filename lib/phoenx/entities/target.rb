@@ -42,10 +42,12 @@ module Phoenx
 	
 	class TestableTarget < AbstractTarget
 		attr_reader :test_targets
+		attr_reader :extensions
+		attr_reader :watch_apps
 		attr_reader :schemes
 		attr_accessor :version
 		attr_accessor :platform
-		attr_reader :target_type
+		attr_accessor :target_type
 		attr_accessor :sub_projects
 		attr_accessor :private_headers
 		attr_accessor :excluded_private_headers
@@ -55,12 +57,19 @@ module Phoenx
 		attr_accessor :excluded_public_headers
 		attr_accessor :umbrella_header
 		attr_accessor :module_name
+		attr_accessor :archive_configuration
+		attr_accessor :launch_configuration
+		attr_accessor :analyze_configuration
+		attr_accessor :profile_configuration
+		attr_accessor :code_coverage_enabled
 	
 		public
 		
 		def initialize(name, type, platform, version)
 			super()
 			@test_targets = []
+			@extensions = []
+			@watch_apps = []
 			@schemes = []
 			@name = name
 			@target_type = type
@@ -73,6 +82,11 @@ module Phoenx
 			@excluded_project_headers = []
 			@public_headers = []
 			@excluded_public_headers = []
+			@archive_configuration = 'Debug'
+			@launch_configuration = 'Debug'
+			@analyze_configuration = 'Debug'
+			@profile_configuration = 'Debug'
+			@code_coverage_enabled = false
 			yield(self)
 		end
 		
@@ -82,6 +96,16 @@ module Phoenx
 			@test_targets << target
 		end
 		
+		def extension_target(name, &block)
+			target = Phoenx::TestableTarget.new name, nil, nil, nil, &block
+			@extensions << target
+		end
+
+		def watch_target(name, type, platform, version, &block)
+			target = Phoenx::TestableTarget.new name, type, platform, version, &block
+			@watch_apps << target
+		end
+
 		def scheme(name, &block)
 			@schemes << Phoenx::Scheme.new(name, block)
 		end

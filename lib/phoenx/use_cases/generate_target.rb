@@ -19,6 +19,10 @@ module Phoenx
 			files = Phoenx.merge_files_array(@target_spec.support_files, @target_spec.excluded_support_files)
 			Phoenx.get_or_add_files(@project, files)
 		end
+
+		def clean_target
+			self.target.frameworks_build_phases.clear
+		end
 		
 		def add_frameworks_and_libraries
 			# Add Framework dependencies
@@ -183,14 +187,18 @@ module Phoenx
 	class TestableTargetBuilder < TargetBuilder
 	
 		:test_target
+		:schemes
 		
 		def generate_target_scheme
 			# Generate main scheme
 			scheme = Xcodeproj::XCScheme.new
 			scheme.configure_with_targets(self.target, @test_target)
-			scheme.test_action.code_coverage_enabled = true
-			scheme.add_build_target(self.target, true)
-			scheme.save_as(@project_spec.project_file_name, @target_spec.name, false)	
+			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
+			self.configure_scheme(scheme, @target_spec)
+			
+			@schemes << scheme
+			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
+			return scheme
 		end
 		
 		def sort_build_phases
@@ -221,23 +229,37 @@ module Phoenx
 		
 		def add_schemes
 			@target_spec.schemes.each do |s|
-				scheme = Xcodeproj::XCScheme.new
+				scheme = Xcodeproj::XCScheme.new 
 				scheme.configure_with_targets(self.target, @test_target)
-				scheme.test_action.code_coverage_enabled = true
-				scheme.add_build_target(self.target, true)
-				scheme.add_test_target(@test_target)
-				archive_configuration = self.target.build_configuration_list[s.archive_configuration]
-				unless archive_configuration
-					abort "Invalid archive configuration assigned for scheme '#{s.name}' ".red + s.archive_configuration.bold
-				end
-				launch_configuration = self.target.build_configuration_list[s.launch_configuration]
-				unless launch_configuration
-					abort "Invalid launch configuration assigned for scheme '#{s.name}' ".red + s.launch_configuration.bold
-				end
-				scheme.archive_action.build_configuration = archive_configuration
-				scheme.launch_action.build_configuration = launch_configuration
-				scheme.save_as(@project_spec.project_file_name, s.name, false)
+				scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
+				self.configure_scheme(scheme, s)
+
+				@schemes << scheme
+				scheme.save_as @project_spec.project_file_name, s.name, false
 			end
+		end
+
+		def configure_scheme(scheme, spec)
+			archive_configuration = self.target.build_configuration_list[spec.archive_configuration]
+			unless archive_configuration
+				abort "Invalid archive configuration assigned for scheme '#{spec.name}' ".red + s.archive_configuration.bold
+			end
+			launch_configuration = self.target.build_configuration_list[spec.launch_configuration]
+			unless launch_configuration
+				abort "Invalid launch configuration assigned for scheme '#{spec.name}' ".red + spec.launch_configuration.bold
+			end
+			analyze_configuration = self.target.build_configuration_list[spec.analyze_configuration]
+			unless analyze_configuration
+				abort "Invalid analyze configuration assigned for scheme '#{spec.name}' ".red + spec.analyze_configuration.bold
+			end
+			profile_configuration = self.target.build_configuration_list[spec.profile_configuration]
+			unless analyze_configuration
+				abort "Invalid profile configuration assigned for scheme '#{spec.name}' ".red + spec.profile_configuration.bold
+			end
+			scheme.archive_action.build_configuration = archive_configuration
+			scheme.launch_action.build_configuration = launch_configuration
+			scheme.analyze_action.build_configuration = analyze_configuration
+			scheme.profile_action.build_configuration = profile_configuration
 		end
 		
 		def add_test_targets
@@ -249,7 +271,9 @@ module Phoenx
 		end
 		
 		def build
-			puts ">> Target ".green + @target_spec.name.bold unless @project_spec.targets.length == 1
+			@schemes = []
+			puts ">> Target ".green + @target_spec.name.bold
+			self.clean_target
 			self.add_sources
 			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
 			self.add_resources
@@ -299,12 +323,60 @@ module Phoenx
 				end
 			end
 		end
-	
+
+		def add_watch_targets
+			return if @target_spec.watch_apps.empty?
+
+			embed_watch_app_build_phase = @target.new_copy_files_build_phase "Embed Watch Content"
+			embed_watch_app_build_phase.symbol_dst_subfolder_spec = :products_directory
+			embed_watch_app_build_phase.dst_path = "$(CONTENTS_FOLDER_PATH)/Watch"
+
+			@target_spec.watch_apps.each do |watch_app_spec|
+				builder = WatchTargetBuilder.new @project, watch_app_spec, @project_spec
+				builder.build
+				@target.add_dependency(builder.target)
+
+				file = @project.products_group.find_file_by_path(watch_app_spec.name + '.' + APP_EXTENSION)
+				embed_watch_app_build_phase.add_file_reference(file)
+
+				builder.schemes.each do |scheme|
+					scheme.add_build_target(@target, true)
+					scheme.save!
+				end
+			end	
+		end
+
+		def add_extension_targets
+			return if @target_spec.extensions.empty?
+
+			embed_extension_build_phase = @target.new_copy_files_build_phase "Embed App Extensions"
+			embed_extension_build_phase.symbol_dst_subfolder_spec = :plug_ins
+
+			@target_spec.extensions.each do |extension_target_spec|
+				extension_target_spec.target_type = :app_extension
+				extension_target_spec.platform = self.target_spec.platform
+				extension_target_spec.version = self.target_spec.version
+				builder = ExtensionTargetBuilder.new @project, extension_target_spec, @project_spec
+				builder.build
+				@target.add_dependency(builder.target)
+
+				file = @project.products_group.find_file_by_path(extension_target_spec.name + '.' + EXTENSION_EXTENSION)
+				embed_extension_build_phase.add_file_reference(file)
+
+				builder.schemes.each do |scheme|
+					scheme.add_build_target(@target, true)
+					scheme.save!
+				end
+			end	
+		end
+
 		def build
 			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
 			@copy_frameworks = @target.new_copy_files_build_phase "Embed Frameworks"
 			@copy_frameworks.symbol_dst_subfolder_spec = :frameworks
 			super()
+			self.add_watch_targets
+			self.add_extension_targets
 			self.framework_files.each do |file|
 				build_file = @copy_frameworks.add_file_reference(file)
 				build_file.settings = ATTRIBUTES_CODE_SIGN_ON_COPY
@@ -315,6 +387,10 @@ module Phoenx
 			return @target
 		end
 	
+		def schemes
+			return @schemes
+		end
+
 	end
 	
 	class FrameworkTargetBuilder < TestableTargetBuilder
@@ -330,7 +406,88 @@ module Phoenx
 		end
 	
 	end
+
+	class WatchTargetBuilder < TestableTargetBuilder
+		:target
+
+		def validate
+			unless @target_spec.target_type == :watch_app or @target_spec.target_type == :watch2_app
+				abort "Watch target '#{@target_spec.name}' has to be of type :watch_app or :watch2_app".red
+			end
+		end
 	
+		def generate_target_scheme
+			# Generate main scheme
+			scheme = Xcodeproj::XCScheme.new 
+			scheme.build_action.add_entry Xcodeproj::XCScheme::BuildAction::Entry.new(@target)
+			scheme.launch_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
+      		scheme.profile_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
+
+			self.configure_scheme(scheme, @target_spec)
+			
+			@schemes << scheme
+			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
+			return scheme
+		end
+
+		def add_extension_targets
+			embed_extension_build_phase = @target.new_copy_files_build_phase "Embed App Extensions"
+			embed_extension_build_phase.symbol_dst_subfolder_spec = :plug_ins
+
+			@target_spec.extensions.each do |extension_target_spec|
+				extension_target_spec.target_type = @target_spec.target_type == :watch2_app ? :watch2_extension : :watch_extension
+				extension_target_spec.platform = self.target_spec.platform
+				extension_target_spec.version = self.target_spec.version
+				builder = ExtensionTargetBuilder.new @project, extension_target_spec, @project_spec
+				builder.build
+				@target.add_dependency(builder.target)
+
+				file = @project.products_group.find_file_by_path(extension_target_spec.name + '.' + EXTENSION_EXTENSION)
+				embed_extension_build_phase.add_file_reference(file)
+			end	
+		end
+
+		def build
+			self.validate
+			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
+			self.add_extension_targets	
+			super()
+		end
+		
+		def target
+			return @target
+		end
+
+		def schemes
+			return @schemes
+		end
+	
+	end
+
+	class ExtensionTargetBuilder < ApplicationTargetBuilder
+		:target
+
+		def generate_target_scheme
+			scheme = super
+			scheme.launch_action.launch_automatically_substyle = "2"
+			scheme.save!
+			return scheme
+		end
+
+		def build
+			super
+		end
+		
+		def target
+			return @target
+		end
+	
+		def schemes
+			return @schemes
+		end
+
+	end
+
 	class TestTargetBuilder < TargetBuilder
 		:target
 		:main_target
@@ -358,6 +515,7 @@ module Phoenx
 			@target.build_phases << @project.new(Xcodeproj::Project::PBXSourcesBuildPhase)
 			@target.build_phases << @project.new(Xcodeproj::Project::PBXFrameworksBuildPhase)
 			@target.build_phases << @project.new(Xcodeproj::Project::PBXResourcesBuildPhase)
+			self.clean_target
 			self.add_sources
 			self.add_config_files
 			self.add_frameworks_and_libraries
