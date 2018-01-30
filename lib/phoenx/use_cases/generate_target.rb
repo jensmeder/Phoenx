@@ -195,6 +195,13 @@ module Phoenx
 			scheme.configure_with_targets(self.target, @test_target)
 			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 			self.configure_scheme(scheme, @target_spec)
+			@target_spec.test_targets.each do |test_target_spec|
+				test_target_spec.additional_test_targets.each do |additional_target|
+					proj = Xcodeproj::Project::open(additional_target.path)
+					target = Phoenx.target_for_name(proj, additional_target.target_name)
+					scheme.test_action.add_testable Xcodeproj::XCScheme::TestAction::TestableReference.new(target, @project) if target
+				end
+			end
 			
 			@schemes << scheme
 			scheme.save_as @project_spec.project_file_name, @target_spec.name, false

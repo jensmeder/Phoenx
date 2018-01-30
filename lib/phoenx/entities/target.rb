@@ -48,7 +48,6 @@ module Phoenx
 		attr_accessor :version
 		attr_accessor :platform
 		attr_accessor :target_type
-		attr_accessor :sub_projects
 		attr_accessor :private_headers
 		attr_accessor :excluded_private_headers
 		attr_accessor :project_headers
@@ -75,7 +74,6 @@ module Phoenx
 			@target_type = type
 			@platform = platform
 			@version = version
-			@sub_projects = []
 			@private_headers = []
 			@excluded_private_headers = []
 			@project_headers = []
@@ -114,13 +112,20 @@ module Phoenx
 	
 	class TestTarget < AbstractTarget
 	
+		attr_reader :additional_test_targets
+
 		public
 	
 		def initialize
 			super
+			@additional_test_targets = []
 			yield(self)
 		end
 	
+		def additional_test_target(target_name, path = nil)
+			additional_test_targets << Dependency.new(target_name, false, path)
+		end
+
 	end
 
 end
