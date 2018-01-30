@@ -240,26 +240,37 @@ module Phoenx
 		end
 
 		def configure_scheme(scheme, spec)
-			archive_configuration = self.target.build_configuration_list[spec.archive_configuration]
-			unless archive_configuration
-				abort "Invalid archive configuration assigned for scheme '#{spec.name}' ".red + s.archive_configuration.bold
+			if spec.archive_configuration
+				archive_configuration = self.target.build_configuration_list[spec.archive_configuration]
+				unless archive_configuration
+					abort "Invalid archive configuration assigned for scheme '#{spec.name}' ".red + s.archive_configuration.bold
+				end
+				scheme.archive_action.build_configuration = archive_configuration
 			end
-			launch_configuration = self.target.build_configuration_list[spec.launch_configuration]
-			unless launch_configuration
-				abort "Invalid launch configuration assigned for scheme '#{spec.name}' ".red + spec.launch_configuration.bold
+
+			if spec.launch_configuration
+				launch_configuration = self.target.build_configuration_list[spec.launch_configuration]
+				unless launch_configuration
+					abort "Invalid launch configuration assigned for scheme '#{spec.name}' ".red + spec.launch_configuration.bold
+				end
+				scheme.launch_action.build_configuration = launch_configuration
 			end
-			analyze_configuration = self.target.build_configuration_list[spec.analyze_configuration]
-			unless analyze_configuration
-				abort "Invalid analyze configuration assigned for scheme '#{spec.name}' ".red + spec.analyze_configuration.bold
+
+			if spec.analyze_configuration
+				analyze_configuration = self.target.build_configuration_list[spec.analyze_configuration]
+				unless analyze_configuration
+					abort "Invalid analyze configuration assigned for scheme '#{spec.name}' ".red + spec.analyze_configuration.bold
+				end
+				scheme.analyze_action.build_configuration = analyze_configuration
 			end
-			profile_configuration = self.target.build_configuration_list[spec.profile_configuration]
-			unless analyze_configuration
-				abort "Invalid profile configuration assigned for scheme '#{spec.name}' ".red + spec.profile_configuration.bold
+
+			if spec.profile_configuration
+				profile_configuration = self.target.build_configuration_list[spec.profile_configuration]
+				unless profile_configuration
+					abort "Invalid profile configuration assigned for scheme '#{spec.name}' ".red + spec.profile_configuration.bold
+				end
+				scheme.profile_action.build_configuration = profile_configuration
 			end
-			scheme.archive_action.build_configuration = archive_configuration
-			scheme.launch_action.build_configuration = launch_configuration
-			scheme.analyze_action.build_configuration = analyze_configuration
-			scheme.profile_action.build_configuration = profile_configuration
 		end
 		
 		def add_test_targets
