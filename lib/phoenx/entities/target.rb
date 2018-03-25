@@ -15,7 +15,7 @@ module Phoenx
 		attr_accessor :support_files
 		attr_accessor :excluded_support_files
 		attr_reader   :dependencies
-		attr_reader :config_files
+		attr_reader   :config_files
 		
 		def initialize
 			@dependencies = []
@@ -92,7 +92,7 @@ module Phoenx
 			yield(self)
 		end
 		
-        # deprecated, stays for backward compatibility reasons
+		# deprecated, stays for backward compatibility reasons
 		def test_target(name, &block)
 			target = Phoenx::TestTarget.new &block
 			target.name = name
@@ -104,13 +104,13 @@ module Phoenx
 			target.name = name
 			@unittest_targets << target
 		end
-        
+
 		def uitest_target(name, &block)
 			target = Phoenx::TestTarget.new &block
 			target.name = name
 			@uitest_targets << target
 		end
-        
+
 		def extension_target(name, &block)
 			target = Phoenx::TestableTarget.new name, nil, nil, nil, &block
 			@extensions << target

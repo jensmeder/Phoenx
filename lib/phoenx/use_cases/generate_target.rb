@@ -186,16 +186,16 @@ module Phoenx
 
 	class TestableTargetBuilder < TargetBuilder
 	
-        :test_targets
+		:test_targets
 		:schemes
 		
 		def generate_target_scheme
 			# Generate main scheme
 			scheme = Xcodeproj::XCScheme.new
 			scheme.configure_with_targets(self.target, nil)
-            @test_targets.each do |target|
-                scheme.configure_with_targets(nil, target)
-            end
+			@test_targets.each do |target|
+				scheme.configure_with_targets(nil, target)
+			end
 			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 			self.configure_scheme(scheme, @target_spec)
 			
@@ -234,9 +234,9 @@ module Phoenx
 			@target_spec.schemes.each do |s|
 				scheme = Xcodeproj::XCScheme.new 
 				scheme.configure_with_targets(self.target, nil)
-                @test_targets.each do |target|
-                    scheme.configure_with_targets(nil, target)
-                end
+				@test_targets.each do |target|
+					scheme.configure_with_targets(nil, target)
+				end
 				scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 				self.configure_scheme(scheme, s)
 
@@ -272,7 +272,7 @@ module Phoenx
 			@target_spec.unittest_targets.each do |test_target_spec|
 				builder = UnitTestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
 				builder.build
-                @test_targets.push(builder.target)
+				@test_targets.push(builder.target)
 			end	
 		end
 		
@@ -280,13 +280,13 @@ module Phoenx
 			@target_spec.uitest_targets.each do |test_target_spec|
 				builder = UITestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
 				builder.build
-                @test_targets.push(builder.target)
+				@test_targets.push(builder.target)
 			end	
 		end
-        
+
 		def build
 			@schemes = []
-            @test_targets = []
+			@test_targets = []
 			puts ">> Target ".green + @target_spec.name.bold
 			self.clean_target
 			self.add_sources
@@ -298,7 +298,7 @@ module Phoenx
 			self.add_frameworks_and_libraries
 			self.add_build_phase_scripts
 			self.add_unittest_targets
-            self.add_uitest_targets
+			self.add_uitest_targets
 			self.generate_target_scheme
 			self.add_schemes
 			self.add_support_files
@@ -437,7 +437,7 @@ module Phoenx
 			scheme = Xcodeproj::XCScheme.new 
 			scheme.build_action.add_entry Xcodeproj::XCScheme::BuildAction::Entry.new(@target)
 			scheme.launch_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
-      		scheme.profile_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
+			scheme.profile_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
 
 			self.configure_scheme(scheme, @target_spec)
 			
@@ -559,24 +559,24 @@ module Phoenx
 		end
 	
 	end
-    
+
 	class UnitTestTargetBuilder < TestTargetBuilder
-        
+
 		def build
-            super
+			super
 			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
 			@target.frameworks_build_phase.add_file_reference(@main_target.product_reference)
-		end        
-        
-    end
+		end
+
+	end
 
 	class UITestTargetBuilder < TestTargetBuilder
-        
+
 		def build
-            super
+			super
 			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:ui_test_bundle]
-		end        
-        
-    end
-    
+		end
+
+	end
+
 end
