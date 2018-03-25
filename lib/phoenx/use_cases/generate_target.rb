@@ -262,14 +262,22 @@ module Phoenx
 			scheme.profile_action.build_configuration = profile_configuration
 		end
 		
-		def add_test_targets
-			@target_spec.test_targets.each do |test_target_spec|
-				builder = TestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
+		def add_unittest_targets
+			@target_spec.unittest_targets.each do |test_target_spec|
+				builder = UnitTestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
 				builder.build
 				@test_target = builder.target
 			end	
 		end
 		
+		def add_uitest_targets
+			@target_spec.uitest_targets.each do |test_target_spec|
+				builder = UITestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
+				builder.build
+				@test_target = builder.target
+			end	
+		end
+        
 		def build
 			@schemes = []
 			puts ">> Target ".green + @target_spec.name.bold
@@ -282,7 +290,8 @@ module Phoenx
 			self.add_system_dependencies
 			self.add_frameworks_and_libraries
 			self.add_build_phase_scripts
-			self.add_test_targets
+			self.add_unittest_targets
+            self.add_uitest_targets
 			self.generate_target_scheme
 			self.add_schemes
 			self.add_support_files
@@ -506,7 +515,6 @@ module Phoenx
 			@project.targets << @target
 			@target.name = @target_spec.name
 			@target.product_name = @target_spec.name
-			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
 			@target.build_configuration_list = Xcodeproj::Project::ProjectHelper.configuration_list(@project, @main_target_spec.platform, @main_target_spec.version)
 			product_ref = @project.products_group.new_reference(@target_spec.name + '.' + XCTEST_EXTENSION, :built_products)
 			product_ref.include_in_index = '0'
@@ -536,7 +544,6 @@ module Phoenx
 			end
 			# Add target dependency.
 			@target.add_dependency(@main_target)
-			@target.frameworks_build_phase.add_file_reference(@main_target.product_reference)
 			self.configure_target
 		end
 		
@@ -545,5 +552,24 @@ module Phoenx
 		end
 	
 	end
+    
+	class UnitTestTargetBuilder < TestTargetBuilder
+        
+		def build
+            super
+			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
+			@target.frameworks_build_phase.add_file_reference(@main_target.product_reference)
+		end        
+        
+    end
 
+	class UITestTargetBuilder < TestTargetBuilder
+        
+		def build
+            super
+			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:ui_test_bundle]
+		end        
+        
+    end
+    
 end

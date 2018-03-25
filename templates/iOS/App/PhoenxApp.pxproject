@@ -20,7 +20,7 @@ Phoenx::Project.new do |s|
 
         end
         
-        target.test_target "PhoenxAppUITests" do |uitest|
+        target.uitest_target "PhoenxAppUITests" do |uitest|
 
             uitest.config_files["Debug"] = "Support/PhoenxAppUITests/Debug.xcconfig"
             uitest.config_files["Release"] = "Support/PhoenxAppUITests/Release.xcconfig"

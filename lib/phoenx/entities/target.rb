@@ -41,7 +41,8 @@ module Phoenx
 	end
 	
 	class TestableTarget < AbstractTarget
-		attr_reader :test_targets
+		attr_reader :unittest_targets
+		attr_reader :uitest_targets
 		attr_reader :extensions
 		attr_reader :watch_apps
 		attr_reader :schemes
@@ -67,7 +68,8 @@ module Phoenx
 		
 		def initialize(name, type, platform, version)
 			super()
-			@test_targets = []
+			@unittest_targets = []
+			@uitest_targets = []
 			@extensions = []
 			@watch_apps = []
 			@schemes = []
@@ -90,12 +92,25 @@ module Phoenx
 			yield(self)
 		end
 		
+        # deprecated, stays for backward compatibility reasons
 		def test_target(name, &block)
 			target = Phoenx::TestTarget.new &block
 			target.name = name
-			@test_targets << target
+			@unittest_targets << target
 		end
 		
+		def unittest_target(name, &block)
+			target = Phoenx::TestTarget.new &block
+			target.name = name
+			@unittest_targets << target
+		end
+        
+		def uitest_target(name, &block)
+			target = Phoenx::TestTarget.new &block
+			target.name = name
+			@uitest_targets << target
+		end
+        
 		def extension_target(name, &block)
 			target = Phoenx::TestableTarget.new name, nil, nil, nil, &block
 			@extensions << target
