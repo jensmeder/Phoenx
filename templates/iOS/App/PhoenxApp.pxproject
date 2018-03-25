@@ -12,11 +12,19 @@ Phoenx::Project.new do |s|
 		target.resources = ["Resources/**/*.{xcassets,storyboard}"]
 		target.sources = ["Sources/**/*.{swift}"]
 	
-        target.test_target "PhoenxAppTests" do |test|
+        target.test_target "PhoenxAppTests" do |unittest|
 
-            test.config_files["Debug"] = "Support/PhoenxAppTests/Debug.xcconfig"
-            test.config_files["Release"] = "Support/PhoenxAppTests/Release.xcconfig"
-            test.sources = ["SourcesTests/**/*.{swift}"]
+            unittest.config_files["Debug"] = "Support/PhoenxAppTests/Debug.xcconfig"
+            unittest.config_files["Release"] = "Support/PhoenxAppTests/Release.xcconfig"
+            unittest.sources = ["SourcesTests/**/*.{swift}"]
+
+        end
+        
+        target.test_target "PhoenxAppUITests" do |uitest|
+
+            uitest.config_files["Debug"] = "Support/PhoenxAppUITests/Debug.xcconfig"
+            uitest.config_files["Release"] = "Support/PhoenxAppUITests/Release.xcconfig"
+            uitest.sources = ["SourcesUITests/**/*.{swift}"]
 
         end
         
