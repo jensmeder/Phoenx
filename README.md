@@ -45,7 +45,7 @@ Phoenx::Project.new do |s|
 
 		# Add a unit test target
 		
-		target.test_target "OSX-Tests" do |t|
+		target.unittest_target "OSX-Tests" do |t|
 		
 			t.sources = ["Tests/**/*.{h,m,c}"]
 			t.frameworks = ["Frameworks/Kiwi/Kiwi.framework"]
@@ -54,6 +54,16 @@ Phoenx::Project.new do |s|
 		
 		end
 	
+		# Add a ui test target
+
+		target.uitest_target "OSX-Tests" do |s|
+		
+			s.sources = ["UITests/**/*.{h,m,c}"]
+			s.config_files["Debug"] = "Configuration/OSXUITests/debug.xcconfig"
+			s.config_files["Release"] = "Configuration/OSXUITests/release.xcconfig"
+		
+		end
+
 	end
 
 end
