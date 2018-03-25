@@ -12,6 +12,14 @@ Phoenx::Project.new do |s|
 		target.resources = ["Resources/**/*.{xcassets,storyboard}"]
 		target.sources = ["Sources/**/*.{swift}"]
 	
+        target.test_target "PhoenxAppTests" do |test|
+
+            test.config_files["Debug"] = "Support/PhoenxAppTests/Debug.xcconfig"
+            test.config_files["Release"] = "Support/PhoenxAppTests/Release.xcconfig"
+            test.sources = ["SourcesTests/**/*.{swift}"]
+
+        end
+        
 	end
 
 end
