@@ -565,7 +565,6 @@ module Phoenx
 		def build
 			super
 			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
-			@target.frameworks_build_phase.add_file_reference(@main_target.product_reference)
 		end
 
 	end
